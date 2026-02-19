@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — Casuarina Snacks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0b1318;
+            --surface: #121d24;
+            --card: #182028;
+            --card-h: #1e2c36;
+            --border: #243040;
+            --teal: #1bc4c0;
+            --teal2: #0fa8a4;
+            --orange: #f97316;
+            --yellow: #fbbf24;
+            --pink: #f472b6;
+            --green: #34d399;
+            --red: #f87171;
+            --text: #f1f5f9;
+            --muted: #8da8b8;
+            --radius: 1rem;
+            --rsm: .65rem;
+            --trans: .22s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        /* ── LOGIN SCREEN ── */
+        #login-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+        }
+
+        .login-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 360px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, .6);
+        }
+
+        .login-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: .6rem;
+        }
+
+        .login-logo img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, .4), 0 6px 24px rgba(249, 115, 22, .2);
+        }
+
+        .login-logo .brand {
+            font-size: 1.2rem;
+            font-weight: 900;
+        }
+
+        .login-logo .brand span {
+            color: var(--orange);
+        }
+
+        .login-logo .sub {
+            font-size: .72rem;
+            color: var(--teal);
+            font-weight: 600;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        .login-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .field label {
+            display: block;
+            font-size: .78rem;
+            font-weight: 700;
+            color: var(--muted);
+            margin-bottom: .35rem;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+        }
+
+        .field input {
+            width: 100%;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--rsm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: .95rem;
+            padding: .65rem .9rem;
+            outline: none;
+            transition: border-color var(--trans), box-shadow var(--trans);
+        }
+
+        .field input:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(27, 196, 192, .15);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--orange), var(--yellow));
+            border: none;
+            border-radius: var(--rsm);
+            color: #111;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 1rem;
+            padding: .75rem;
+            cursor: pointer;
+            transition: transform var(--trans), box-shadow var(--trans);
+        }
+
+        .login-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 24px rgba(249, 115, 22, .4);
+        }
+
+        .login-error {
+            text-align: center;
+            font-size: .82rem;
+            color: var(--red);
+            background: rgba(248, 113, 113, .1);
+            border: 1px solid rgba(248, 113, 113, .25);
+            border-radius: var(--rsm);
+            padding: .5rem .8rem;
+            display: none;
+        }
+
+        .login-error.show {
+            display: block;
+        }
+
+        /* ── MAIN APP (hidden until login) ── */
+        #app {
+            display: none;
+        }
+
+        #app.visible {
+            display: block;
+        }
+
+        /* ── TOP BAR ── */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(11, 19, 24, .92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: .75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .topbar-logo img {
+            width: 44px;
+            height: 44px;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(27, 196, 192, .35);
+        }
+
+        .topbar-title {
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .topbar-title span {
+            color: var(--orange);
+        }
+
+        .topbar-sub {
+            font-size: .68rem;
+            color: var(--muted);
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .admin-pill {
+            background: rgba(249, 115, 22, .15);
+            border: 1px solid rgba(249, 115, 22, .3);
+            color: var(--orange);
+            font-size: .72rem;
+            font-weight: 700;
+            padding: .2rem .6rem;
+            border-radius: 2rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+            color: var(--muted);
+            font-size: .85rem;
+            font-weight: 600;
+            text-decoration: none;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--rsm);
+            padding: .4rem .8rem;
+            transition: all var(--trans);
+        }
+
+        .menu-link:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        .logout-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--rsm);
+            color: var(--muted);
+            font-family: inherit;
+            font-size: .82rem;
+            font-weight: 600;
+            padding: .4rem .8rem;
+            cursor: pointer;
+            transition: all var(--trans);
+        }
+
+        .logout-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        /* ── CONTENT ── */
+        .content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* ── SECTION CARD ── */
+        .section-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .section-head {
+            padding: 1.1rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .section-head-left {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+        }
+
+        .section-icon {
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .section-desc {
+            font-size: .78rem;
+            color: var(--muted);
+            margin-top: .1rem;
+        }
+
+        .section-body {
+            padding: 1.4rem;
+        }
+
+        /* ── STATUS TOGGLE ── */
+        .status-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .status-info {
+            display: flex;
+            flex-direction: column;
+            gap: .3rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            font-size: .9rem;
+            font-weight: 800;
+            padding: .4rem 1rem;
+            border-radius: 2rem;
+            border: 2px solid;
+        }
+
+        .status-badge.open {
+            background: rgba(52, 211, 153, .12);
+            border-color: rgba(52, 211, 153, .4);
+            color: var(--green);
+        }
+
+        .status-badge.closed {
+            background: rgba(248, 113, 113, .12);
+            border-color: rgba(248, 113, 113, .4);
+            color: var(--red);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .2
+            }
+        }
+
+        .status-hint {
+            font-size: .78rem;
+            color: var(--muted);
+        }
+
+        .toggle-btn {
+            padding: .65rem 1.5rem;
+            border: none;
+            border-radius: var(--rsm);
+            font-family: inherit;
+            font-weight: 800;
+            font-size: .95rem;
+            cursor: pointer;
+            transition: transform var(--trans), box-shadow var(--trans);
+        }
+
+        .toggle-btn.open-action {
+            background: linear-gradient(135deg, var(--green), #059669);
+            color: #fff;
+        }
+
+        .toggle-btn.close-action {
+            background: linear-gradient(135deg, var(--red), #dc2626);
+            color: #fff;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .4);
+        }
+
+        /* ── ADD PRODUCT FORM ── */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: .35rem;
+        }
+
+        .form-field.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-field label {
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--rsm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: .92rem;
+            padding: .6rem .85rem;
+            outline: none;
+            transition: border-color var(--trans), box-shadow var(--trans);
+        }
+
+        .form-field textarea {
+            resize: vertical;
+            min-height: 72px;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus,
+        .form-field textarea:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(27, 196, 192, .15);
+        }
+
+        .form-field select option {
+            background: var(--card);
+        }
+
+        /* Emoji picker row */
+        .emoji-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin-top: .3rem;
+        }
+
+        .emoji-opt {
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: .2rem .3rem;
+            border: 2px solid transparent;
+            border-radius: .4rem;
+            transition: all var(--trans);
+        }
+
+        .emoji-opt:hover {
+            background: var(--card-h);
+            border-color: var(--border);
+        }
+
+        .emoji-opt.selected {
+            border-color: var(--teal);
+            background: rgba(27, 196, 192, .12);
+        }
+
+        .badge-checks {
+            display: flex;
+            gap: .6rem;
+            flex-wrap: wrap;
+            margin-top: .3rem;
+        }
+
+        .badge-check {
+            display: flex;
+            align-items: center;
+            gap: .3rem;
+            font-size: .82rem;
+            cursor: pointer;
+        }
+
+        .badge-check input {
+            accent-color: var(--teal);
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+
+        .add-product-btn {
+            margin-top: 1.2rem;
+            background: linear-gradient(135deg, var(--teal2), var(--teal));
+            border: none;
+            border-radius: var(--rsm);
+            color: #0b1318;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: .95rem;
+            padding: .7rem 1.6rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            transition: transform var(--trans), box-shadow var(--trans);
+        }
+
+        .add-product-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 20px rgba(27, 196, 192, .35);
+        }
+
+        /* ── PRODUCT LIST ── */
+        .products-controls {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.1rem;
+        }
+
+        .filter-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            color: var(--muted);
+            font-family: inherit;
+            font-size: .82rem;
+            font-weight: 600;
+            padding: .35rem .85rem;
+            cursor: pointer;
+            transition: all var(--trans);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--teal);
+            color: var(--text);
+        }
+
+        .filter-btn.active {
+            background: var(--teal);
+            border-color: var(--teal);
+            color: #0b1318;
+            font-weight: 800;
+        }
+
+        .count-pill {
+            margin-left: auto;
+            font-size: .78rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .prod-list {
+            display: flex;
+            flex-direction: column;
+            gap: .6rem;
+        }
+
+        .prod-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--rsm);
+            display: flex;
+            align-items: center;
+            gap: .9rem;
+            padding: .75rem 1rem;
+            transition: border-color var(--trans), opacity var(--trans);
+        }
+
+        .prod-item.unavailable {
+            opacity: .55;
+        }
+
+        .prod-item.unavailable .prod-name {
+            text-decoration: line-through;
+            color: var(--muted);
+        }
+
+        .prod-emoji {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            width: 2.4rem;
+            text-align: center;
+        }
+
+        .prod-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .prod-name {
+            font-size: .93rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .prod-meta {
+            font-size: .75rem;
+            color: var(--muted);
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
+            margin-top: .1rem;
+            align-items: center;
+        }
+
+        .prod-cat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            padding: .05rem .4rem;
+            font-size: .68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        .prod-price {
+            font-size: .85rem;
+            font-weight: 800;
+            color: var(--yellow);
+        }
+
+        .prod-badges {
+            display: flex;
+            gap: .25rem;
+        }
+
+        .pb {
+            font-size: .6rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            padding: .12rem .35rem;
+            border-radius: .25rem;
+        }
+
+        .pb-hot {
+            background: var(--orange);
+            color: #fff;
+        }
+
+        .pb-new {
+            background: var(--teal);
+            color: #0b1318;
+        }
+
+        .pb-pop {
+            background: var(--pink);
+            color: #fff;
+        }
+
+        .prod-actions {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            flex-shrink: 0;
+        }
+
+        /* Availability toggle */
+        .avail-toggle {
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--rsm);
+            padding: .3rem .6rem;
+            cursor: pointer;
+            font-size: .78rem;
+            font-weight: 700;
+            transition: all var(--trans);
+            white-space: nowrap;
+        }
+
+        .avail-toggle.available {
+            border-color: rgba(52, 211, 153, .4);
+            color: var(--green);
+        }
+
+        .avail-toggle.unavailable {
+            border-color: rgba(248, 113, 113, .3);
+            color: var(--red);
+        }
+
+        .avail-toggle:hover {
+            transform: scale(1.03);
+        }
+
+        .delete-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--rsm);
+            color: var(--muted);
+            width: 2rem;
+            height: 2rem;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            font-size: .9rem;
+            transition: all var(--trans);
+        }
+
+        .delete-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+            background: rgba(248, 113, 113, .08);
+        }
+
+        /* Empty */
+        .prod-empty {
+            text-align: center;
+            padding: 2.5rem;
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        .prod-empty .ei {
+            font-size: 2rem;
+            margin-bottom: .4rem;
+        }
+
+        /* ── TOAST ── */
+        .toast-wrap {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: .45rem;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--rsm);
+            padding: .55rem 1.1rem;
+            font-size: .87rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: .45rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+            animation: tIn .25s ease, tOut .25s ease 1.75s forwards;
+            white-space: nowrap;
+        }
+
+        @keyframes tIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        @keyframes tOut {
+            to {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+        }
+
+        /* ── CONFIRM MODAL ── */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            background: rgba(0, 0, 0, .7);
+            backdrop-filter: blur(4px);
+            display: grid;
+            place-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--trans);
+        }
+
+        .confirm-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .confirm-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem 1.8rem;
+            width: min(400px, 92vw);
+            text-align: center;
+            transform: scale(.92);
+            transition: transform var(--trans);
+        }
+
+        .confirm-overlay.open .confirm-box {
+            transform: scale(1);
+        }
+
+        .confirm-icon {
+            font-size: 2.5rem;
+            margin-bottom: .6rem;
+        }
+
+        .confirm-box h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: .4rem;
+        }
+
+        .confirm-box p {
+            color: var(--muted);
+            font-size: .87rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .confirm-btns {
+            display: flex;
+            gap: .7rem;
+            justify-content: center;
+        }
+
+        .confirm-cancel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--rsm);
+            color: var(--muted);
+            font-family: inherit;
+            font-size: .9rem;
+            font-weight: 700;
+            padding: .6rem 1.3rem;
+            cursor: pointer;
+            transition: all var(--trans);
+        }
+
+        .confirm-cancel:hover {
+            border-color: var(--muted);
+            color: var(--text);
+        }
+
+        .confirm-ok {
+            background: linear-gradient(135deg, var(--red), #dc2626);
+            border: none;
+            border-radius: var(--rsm);
+            color: #fff;
+            font-family: inherit;
+            font-size: .9rem;
+            font-weight: 800;
+            padding: .6rem 1.3rem;
+            cursor: pointer;
+            transition: transform var(--trans);
+        }
+
+        .confirm-ok:hover {
+            transform: scale(1.04);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 580px) {
+            .content {
+                padding: 1.2rem 1rem 3rem;
+            }
+
+            .section-body {
+                padding: 1rem;
+            }
+
+            .topbar {
+                padding: .7rem 1rem;
+            }
+
+            .prod-item {
+                flex-wrap: wrap;
+            }
+
+            .prod-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ══ LOGIN ══ -->
+    <div id="login-screen">
+        <div class="login-card">
+            <div class="login-logo">
+                <img src="casuarina.jpeg" alt="Logo" onerror="this.style.display='none'" />
+                <div class="brand">Casuarina <span>Snacks</span></div>
+                <div class="sub">Panel de Administración</div>
+            </div>
+            <div class="login-title">🔐 Acceso privado</div>
+            <div class="field">
+                <label>Contraseña</label>
+                <input type="password" id="pwd-input" placeholder="Ingresa la contraseña..."
+                    autocomplete="current-password" />
+            </div>
+            <div class="login-error" id="login-error">Contraseña incorrecta. Intenta de nuevo.</div>
+            <button class="login-btn" id="login-btn">Entrar al panel →</button>
+        </div>
+    </div>
+
+    <!-- ══ APP ══ -->
+    <div id="app">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <div class="topbar-logo">
+                    <img src="casuarina.jpeg" alt="Logo" onerror="this.style.display='none'" />
+                </div>
+                <div>
+                    <div class="topbar-title">Casuarina <span>Admin</span></div>
+                    <div class="topbar-sub">Panel de control</div>
+                </div>
+                <span class="admin-pill">Admin</span>
+            </div>
+            <div class="topbar-right">
+                <a class="menu-link" href="index.html" target="_blank">👁 Ver menú</a>
+                <button class="logout-btn" id="logout-btn">Cerrar sesión</button>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- ══ STATUS CARD ══ -->
+            <div class="section-card">
+                <div class="section-head">
+                    <div class="section-head-left">
+                        <span class="section-icon">🏪</span>
+                        <div>
+                            <div class="section-title">Estado del negocio</div>
+                            <div class="section-desc">Controla si el menú muestra "Abierto" o "Cerrado"</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="status-row">
+                        <div class="status-info">
+                            <div class="status-badge open" id="status-badge">
+                                <span class="status-dot"></span>
+                                <span id="status-text">Abierto</span>
+                            </div>
+                            <div class="status-hint" id="status-hint">El menú muestra el indicador verde de "Abierto"
+                            </div>
+                        </div>
+                        <button class="toggle-btn close-action" id="status-toggle-btn">🔒 Marcar como Cerrado</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ ADD PRODUCT CARD ══ -->
+            <div class="section-card">
+                <div class="section-head">
+                    <div class="section-head-left">
+                        <span class="section-icon">➕</span>
+                        <div>
+                            <div class="section-title">Agregar producto</div>
+                            <div class="section-desc">Llena los datos para añadir un nuevo ítem al menú</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label>Nombre del producto *</label>
+                            <input type="text" id="f-name" placeholder="Ej. Papas con Habanero" maxlength="50" />
+                        </div>
+                        <div class="form-field">
+                            <label>Precio (MXN) *</label>
+                            <input type="number" id="f-price" placeholder="Ej. 35" min="1" max="9999" />
+                        </div>
+                        <div class="form-field">
+                            <label>Categoría *</label>
+                            <select id="f-cat">
+                                <option value="">— Selecciona —</option>
+                                <option value="snacks">🍿 Snacks</option>
+                                <option value="dulces">🍬 Dulces</option>
+                                <option value="bebidas-frias">🧃 Bebidas Frías</option>
+                                <option value="bebidas-calientes">☕ Bebidas Calientes</option>
+                                <option value="saludable">🥗 Saludable</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label>Emoji del producto *</label>
+                            <input type="text" id="f-emoji" placeholder="🍿" maxlength="4" style="font-size:1.3rem" />
+                            <div class="emoji-row" id="emoji-row">
+                                🍿🥔🌮🌭🧆🥜🍫🍬🍭🧁🥧🍰🍹🧃🥤☕🧋🍵💧🍓🍋🍎🥗🌾🥛
+                            </div>
+                        </div>
+                        <div class="form-field full">
+                            <label>Descripción</label>
+                            <textarea id="f-desc" placeholder="Breve descripción del producto..."
+                                maxlength="120"></textarea>
+                        </div>
+                        <div class="form-field full">
+                            <label>Etiquetas (badges)</label>
+                            <div class="badge-checks">
+                                <label class="badge-check"><input type="checkbox" id="b-hot" value="hot" /> 🔥
+                                    Favorito</label>
+                                <label class="badge-check"><input type="checkbox" id="b-new" value="new" /> ✨
+                                    Nuevo</label>
+                                <label class="badge-check"><input type="checkbox" id="b-pop" value="pop" /> ⭐
+                                    Popular</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="add-product-btn" id="add-product-btn">✚ Agregar al menú</button>
+                </div>
+            </div>
+
+            <!-- ══ PRODUCT LIST CARD ══ -->
+            <div class="section-card">
+                <div class="section-head">
+                    <div class="section-head-left">
+                        <span class="section-icon">📋</span>
+                        <div>
+                            <div class="section-title">Productos en el menú</div>
+                            <div class="section-desc">Activa/desactiva disponibilidad o elimina productos</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="products-controls">
+                        <button class="filter-btn active" data-filter="all" id="filter-all">Todos</button>
+                        <button class="filter-btn" data-filter="avail" id="filter-avail">✅ Disponibles</button>
+                        <button class="filter-btn" data-filter="out" id="filter-out">⛔ Sin inventario</button>
+                        <span class="count-pill" id="prod-count-pill">25 productos</span>
+                    </div>
+                    <div class="prod-list" id="prod-list"></div>
+                </div>
+            </div>
+
+        </div><!-- /content -->
+    </div><!-- /app -->
+
+    <!-- ══ CONFIRM MODAL ══ -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-box">
+            <div class="confirm-icon">🗑️</div>
+            <h3>¿Eliminar producto?</h3>
+            <p id="confirm-text">Esta acción no se puede deshacer.</p>
+            <div class="confirm-btns">
+                <button class="confirm-cancel" id="confirm-cancel">Cancelar</button>
+                <button class="confirm-ok" id="confirm-ok">Sí, eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ TOAST ══ -->
+    <div class="toast-wrap" id="toast-wrap"></div>
+
+    <script>
+        /* ════════════════════════════════════
+           CONSTANTS & STORAGE
+        ════════════════════════════════════ */
+        const STORAGE_PRODUCTS = 'casuarina_products';
+        const STORAGE_STATUS = 'casuarina_status';
+        const ADMIN_PASSWORD = 'casuarina2024'; // ← cambia esta contraseña
+
+        const DEFAULT_PRODUCTS = [
+            { id: 1, name: 'Palomitas de Maíz', desc: 'Palomitas recién hechas con mantequilla y sal.', price: 25, emoji: '🍿', cat: 'snacks', badges: ['hot'], available: true },
+            { id: 2, name: 'Papas Fritas', desc: 'Crujientes papas estilo kettle, en varios sabores.', price: 30, emoji: '🥔', cat: 'snacks', badges: ['pop'], available: true },
+            { id: 3, name: 'Nachos con Queso', desc: 'Nachos dorados bañados en salsa de queso caliente.', price: 45, emoji: '🫔', cat: 'snacks', badges: [], available: true },
+            { id: 4, name: 'Hot Cheetos', desc: 'Botana de maíz muy picosa, crujiente y adictiva.', price: 20, emoji: '🌶️', cat: 'snacks', badges: ['pop'], available: true },
+            { id: 5, name: 'Palomitas Ranch', desc: 'Palomitas sabor ranch con toque de queso.', price: 30, emoji: '🍿', cat: 'snacks', badges: ['new'], available: true },
+            { id: 6, name: 'Cacahuates Japones', desc: 'Cacahuates cubiertos de harina crujiente japonesa.', price: 18, emoji: '🥜', cat: 'snacks', badges: [], available: true },
+            { id: 7, name: 'Gomitas de Osito', desc: 'Gomitas de colores con sabores de frutas tropicales.', price: 15, emoji: '🐻', cat: 'dulces', badges: ['pop'], available: true },
+            { id: 8, name: 'Chocolates Surtidos', desc: 'Selección de chocolates, leche, oscuro y almendra.', price: 35, emoji: '🍫', cat: 'dulces', badges: [], available: true },
+            { id: 9, name: 'Paleta de Tamarindo', desc: 'Paleta con chamoy, tamarindo y chile en polvo.', price: 12, emoji: '🍭', cat: 'dulces', badges: ['hot'], available: true },
+            { id: 10, name: 'Mazapán', desc: 'Tradicional mazapán de cacahuate, suave y dulce.', price: 8, emoji: '🟤', cat: 'dulces', badges: [], available: true },
+            { id: 11, name: 'Rebanada de Pay', desc: 'Pay de manzana casero con canela y azúcar.', price: 40, emoji: '🥧', cat: 'dulces', badges: ['new'], available: true },
+            { id: 12, name: 'Agua Fresca', desc: 'Agua de sandía, horchata o jamaica. Refrescante.', price: 20, emoji: '🍹', cat: 'bebidas-frias', badges: ['pop'], available: true },
+            { id: 13, name: 'Limonada', desc: 'Limonada natural con menta fresca y hielo.', price: 25, emoji: '🍋', cat: 'bebidas-frias', badges: [], available: true },
+            { id: 14, name: 'Smoothie de Fresa', desc: 'Batido de fresas naturales, leche y vainilla.', price: 40, emoji: '🍓', cat: 'bebidas-frias', badges: ['new'], available: true },
+            { id: 15, name: 'Refresco', desc: 'Variedad de refrescos fríos de tu elección.', price: 22, emoji: '🥤', cat: 'bebidas-frias', badges: [], available: true },
+            { id: 16, name: 'Agua Mineral', desc: 'Agua mineral natural con gas para refrescarte.', price: 15, emoji: '💧', cat: 'bebidas-frias', badges: [], available: true },
+            { id: 17, name: 'Té Frío de Limón', desc: 'Té helado con limón y miel, perfecto para el calor.', price: 28, emoji: '🍵', cat: 'bebidas-frias', badges: ['hot'], available: true },
+            { id: 18, name: 'Café Americano', desc: 'Café de grano negro fuerte, servido bien caliente.', price: 30, emoji: '☕', cat: 'bebidas-calientes', badges: ['pop'], available: true },
+            { id: 19, name: 'Café con Leche', desc: 'Espresso suave con leche vaporizada y canela.', price: 35, emoji: '🧋', cat: 'bebidas-calientes', badges: [], available: true },
+            { id: 20, name: 'Chocolate Caliente', desc: 'Chocolate espeso cremoso con malvaviscos.', price: 38, emoji: '🍫', cat: 'bebidas-calientes', badges: ['hot'], available: true },
+            { id: 21, name: 'Té de Manzanilla', desc: 'Tranquilo té de manzanilla con miel y limón.', price: 20, emoji: '🌼', cat: 'bebidas-calientes', badges: [], available: true },
+            { id: 22, name: 'Ensalada de Frutas', desc: 'Fruta fresca de temporada con chile y limón.', price: 35, emoji: '🍱', cat: 'saludable', badges: ['new'], available: true },
+            { id: 23, name: 'Mix de Nueces', desc: 'Mezcla de nueces, almendras y arándanos secos.', price: 45, emoji: '🥜', cat: 'saludable', badges: [], available: true },
+            { id: 24, name: 'Granola Bar', desc: 'Barra de granola con avena, miel y semillas.', price: 25, emoji: '🌾', cat: 'saludable', badges: ['pop'], available: true },
+            { id: 25, name: 'Yogurt con Granola', desc: 'Yogurt natural con granola crujiente y miel de abeja.', price: 40, emoji: '🥛', cat: 'saludable', badges: [], available: true },
+        ];
+
+        /* ── Storage helpers ── */
+        function getProducts() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_PRODUCTS)) || DEFAULT_PRODUCTS; }
+            catch { return DEFAULT_PRODUCTS; }
+        }
+        function saveProducts(p) { localStorage.setItem(STORAGE_PRODUCTS, JSON.stringify(p)); }
+
+        function getStatus() { return localStorage.getItem(STORAGE_STATUS) || 'open'; }
+        function saveStatus(s) { localStorage.setItem(STORAGE_STATUS, s); }
+
+        /* ════════════════════════════════════
+           LOGIN
+        ════════════════════════════════════ */
+        const loginScreen = document.getElementById('login-screen');
+        const app = document.getElementById('app');
+        const pwdInput = document.getElementById('pwd-input');
+        const loginBtn = document.getElementById('login-btn');
+        const loginError = document.getElementById('login-error');
+
+        function doLogin() {
+            if (pwdInput.value === ADMIN_PASSWORD) {
+                loginScreen.style.display = 'none';
+                app.classList.add('visible');
+                initApp();
+            } else {
+                loginError.classList.add('show');
+                pwdInput.value = '';
+                pwdInput.focus();
+            }
+        }
+        loginBtn.addEventListener('click', doLogin);
+        pwdInput.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            app.classList.remove('visible');
+            loginScreen.style.display = 'flex';
+            pwdInput.value = '';
+            loginError.classList.remove('show');
+        });
+
+        /* ════════════════════════════════════
+           APP INIT
+        ════════════════════════════════════ */
+        function initApp() {
+            // Init default products in storage if not set yet
+            if (!localStorage.getItem(STORAGE_PRODUCTS)) saveProducts(DEFAULT_PRODUCTS);
+            renderStatus();
+            renderProducts();
+            initEmojiPicker();
+        }
+
+        /* ════════════════════════════════════
+           STATUS
+        ════════════════════════════════════ */
+        const statusBadge = document.getElementById('status-badge');
+        const statusText = document.getElementById('status-text');
+        const statusHint = document.getElementById('status-hint');
+        const statusToggle = document.getElementById('status-toggle-btn');
+
+        function renderStatus() {
+            const s = getStatus();
+            if (s === 'open') {
+                statusBadge.className = 'status-badge open';
+                statusText.textContent = 'Abierto';
+                statusHint.textContent = 'El menú muestra el indicador verde de "Abierto"';
+                statusToggle.className = 'toggle-btn close-action';
+                statusToggle.textContent = '🔒 Marcar como Cerrado';
+            } else {
+                statusBadge.className = 'status-badge closed';
+                statusText.textContent = 'Cerrado';
+                statusHint.textContent = 'El menú muestra el banner de "Cerrado" a los clientes';
+                statusToggle.className = 'toggle-btn open-action';
+                statusToggle.textContent = '🔓 Marcar como Abierto';
+            }
+        }
+
+        statusToggle.addEventListener('click', () => {
+            const current = getStatus();
+            const next = current === 'open' ? 'closed' : 'open';
+            saveStatus(next);
+            renderStatus();
+            toast(next === 'closed' ? '🔒 Negocio marcado como Cerrado' : '🔓 Negocio marcado como Abierto');
+        });
+
+        /* ════════════════════════════════════
+           ADD PRODUCT
+        ════════════════════════════════════ */
+        let selectedEmoji = '';
+        let activeFilter = 'all';
+
+        function initEmojiPicker() {
+            const row = document.getElementById('emoji-row');
+            row.innerHTML = '';
+            const emojis = ['🍿', '🥔', '🌮', '🌭', '🧆', '🥜', '🍫', '🍬', '🍭', '🧁', '🥧', '🍰', '🍹', '🧃', '🥤', '☕', '🧋', '🍵', '💧', '🍓', '🍋', '🍎', '🥗', '🌾', '🥛', '🌶️', '🐻', '🟤', '🍺', '🫔'];
+            emojis.forEach(e => {
+                const btn = document.createElement('span');
+                btn.className = 'emoji-opt';
+                btn.textContent = e;
+                btn.title = e;
+                btn.addEventListener('click', () => {
+                    document.getElementById('f-emoji').value = e;
+                    selectedEmoji = e;
+                    document.querySelectorAll('.emoji-opt').forEach(x => x.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+                row.appendChild(btn);
+            });
+        }
+
+        document.getElementById('f-emoji').addEventListener('input', function () {
+            selectedEmoji = this.value.trim();
+            document.querySelectorAll('.emoji-opt').forEach(x => {
+                x.classList.toggle('selected', x.textContent === selectedEmoji);
+            });
+        });
+
+        document.getElementById('add-product-btn').addEventListener('click', () => {
+            const name = document.getElementById('f-name').value.trim();
+            const price = parseFloat(document.getElementById('f-price').value);
+            const cat = document.getElementById('f-cat').value;
+            const emoji = document.getElementById('f-emoji').value.trim() || '🍿';
+            const desc = document.getElementById('f-desc').value.trim();
+            const badges = [];
+            if (document.getElementById('b-hot').checked) badges.push('hot');
+            if (document.getElementById('b-new').checked) badges.push('new');
+            if (document.getElementById('b-pop').checked) badges.push('pop');
+
+            if (!name) return toast('⚠️ Escribe el nombre del producto', true);
+            if (!price || price <= 0) return toast('⚠️ Ingresa un precio válido', true);
+            if (!cat) return toast('⚠️ Selecciona una categoría', true);
+
+            const products = getProducts();
+            const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+            products.push({ id: newId, name, price, cat, emoji, desc, badges, available: true });
+            saveProducts(products);
+            renderProducts();
+            toast(`✅ "${name}" agregado al menú`);
+
+            // Reset form
+            document.getElementById('f-name').value = '';
+            document.getElementById('f-price').value = '';
+            document.getElementById('f-cat').value = '';
+            document.getElementById('f-emoji').value = '';
+            document.getElementById('f-desc').value = '';
+            document.getElementById('b-hot').checked = false;
+            document.getElementById('b-new').checked = false;
+            document.getElementById('b-pop').checked = false;
+            document.querySelectorAll('.emoji-opt').forEach(x => x.classList.remove('selected'));
+        });
+
+        /* ════════════════════════════════════
+           PRODUCT LIST
+        ════════════════════════════════════ */
+        const CAT_NAMES = {
+            snacks: 'Snack', dulces: 'Dulce', 'bebidas-frias': 'Beb. Fría',
+            'bebidas-calientes': 'Beb. Caliente', saludable: 'Saludable'
+        };
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeFilter = btn.dataset.filter;
+                renderProducts();
+            });
+        });
+
+        function renderProducts() {
+            const products = getProducts();
+            const list = document.getElementById('prod-list');
+            const countPill = document.getElementById('prod-count-pill');
+
+            let filtered = products;
+            if (activeFilter === 'avail') filtered = products.filter(p => p.available !== false);
+            if (activeFilter === 'out') filtered = products.filter(p => p.available === false);
+
+            countPill.textContent = `${filtered.length} producto${filtered.length !== 1 ? 's' : ''}`;
+            list.innerHTML = '';
+
+            if (filtered.length === 0) {
+                list.innerHTML = `<div class="prod-empty"><div class="ei">🗂️</div><p>No hay productos en esta categoría</p></div>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const isAvail = p.available !== false;
+                const row = document.createElement('div');
+                row.className = `prod-item ${isAvail ? '' : 'unavailable'}`;
+                row.dataset.id = p.id;
+
+                const badgeHTML = (p.badges || []).map(b => {
+                    const cl = { hot: 'pb-hot', new: 'pb-new', pop: 'pb-pop' }[b] || '';
+                    const lb = { hot: 'Favorito', new: 'Nuevo', pop: 'Popular' }[b] || b;
+                    return `<span class="pb ${cl}">${lb}</span>`;
+                }).join('');
+
+                row.innerHTML = `
+        <div class="prod-emoji">${p.emoji || '🍿'}</div>
+        <div class="prod-info">
+          <div class="prod-name">${p.name}</div>
+          <div class="prod-meta">
+            <span class="prod-cat">${CAT_NAMES[p.cat] || p.cat}</span>
+            <span class="prod-price">$${p.price} MXN</span>
+            <div class="prod-badges">${badgeHTML}</div>
+          </div>
+        </div>
+        <div class="prod-actions">
+          <button class="avail-toggle ${isAvail ? 'available' : 'unavailable'}"
+            data-id="${p.id}" id="avail-${p.id}">
+            ${isAvail ? '✅ Disponible' : '⛔ Sin inventario'}
+          </button>
+          <button class="delete-btn" data-id="${p.id}" title="Eliminar producto" id="del-${p.id}">🗑</button>
+        </div>`;
+                list.appendChild(row);
+            });
+
+            // Availability toggle
+            document.querySelectorAll('.avail-toggle').forEach(btn => {
+                btn.addEventListener('click', () => toggleAvailability(Number(btn.dataset.id)));
+            });
+
+            // Delete
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => askDelete(Number(btn.dataset.id)));
+            });
+        }
+
+        function toggleAvailability(id) {
+            const products = getProducts();
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+            p.available = !p.available;
+            saveProducts(products);
+            renderProducts();
+            toast(p.available ? `✅ "${p.name}" marcado como disponible` : `⛔ "${p.name}" marcado como sin inventario`);
+        }
+
+        /* ── DELETE with confirm ── */
+        let pendingDeleteId = null;
+        const confirmOverlay = document.getElementById('confirm-overlay');
+        const confirmText = document.getElementById('confirm-text');
+        const confirmOk = document.getElementById('confirm-ok');
+        const confirmCancel = document.getElementById('confirm-cancel');
+
+        function askDelete(id) {
+            const products = getProducts();
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+            pendingDeleteId = id;
+            confirmText.textContent = `¿Eliminar "${p.name}" del menú? Esta acción no se puede deshacer.`;
+            confirmOverlay.classList.add('open');
+        }
+        confirmCancel.addEventListener('click', () => {
+            confirmOverlay.classList.remove('open');
+            pendingDeleteId = null;
+        });
+        confirmOverlay.addEventListener('click', e => {
+            if (e.target === confirmOverlay) { confirmOverlay.classList.remove('open'); pendingDeleteId = null; }
+        });
+        confirmOk.addEventListener('click', () => {
+            if (pendingDeleteId === null) return;
+            const products = getProducts().filter(p => p.id !== pendingDeleteId);
+            saveProducts(products);
+            renderProducts();
+            toast('🗑️ Producto eliminado del menú');
+            confirmOverlay.classList.remove('open');
+            pendingDeleteId = null;
+        });
+
+        /* ════════════════════════════════════
+           TOAST
+        ════════════════════════════════════ */
+        function toast(msg, warn = false) {
+            const wrap = document.getElementById('toast-wrap');
+            const t = document.createElement('div');
+            t.className = 'toast';
+            if (warn) t.style.borderColor = 'rgba(251,191,36,.4)';
+            t.textContent = msg;
+            wrap.appendChild(t);
+            setTimeout(() => t.remove(), 2200);
+        }
+    </script>
+</body>
+
+</html>

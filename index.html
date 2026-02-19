@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Casuarina Snacks — Menú</title>
+    <meta name="description"
+        content="Menú informativo de Casuarina Snacks. Conoce nuestra variedad de snacks y bebidas." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0b1318;
+            --surface: #121d24;
+            --card: #182028;
+            --card-h: #1e2c36;
+            --border: #243040;
+            --teal: #1bc4c0;
+            --teal2: #0fa8a4;
+            --orange: #f97316;
+            --orange2: #fb923c;
+            --pink: #f472b6;
+            --pink2: #ec4899;
+            --yellow: #fbbf24;
+            --text: #f1f5f9;
+            --muted: #8da8b8;
+            --radius: 1rem;
+            --radius-sm: .65rem;
+            --shadow: 0 8px 32px rgba(0, 0, 0, .5);
+            --trans: .25s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        /* ── HEADER ── */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(11, 19, 24, .9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: .75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .logo img {
+            height: 52px;
+            width: 52px;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(27, 196, 192, .4), 0 2px 12px rgba(0, 0, 0, .4);
+        }
+
+        .logo-text-wrap {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .logo-name {
+            font-size: 1.3rem;
+            font-weight: 900;
+            letter-spacing: -.5px;
+            background: linear-gradient(90deg, var(--orange), var(--yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-sub {
+            font-size: .7rem;
+            font-weight: 600;
+            color: var(--teal);
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        /* Search bar */
+        .search-wrap {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-wrap input {
+            width: 100%;
+            padding: .55rem 1rem .55rem 2.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            color: var(--text);
+            font-family: inherit;
+            font-size: .9rem;
+            outline: none;
+            transition: border-color var(--trans), box-shadow var(--trans);
+        }
+
+        .search-wrap input:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(27, 196, 192, .15);
+        }
+
+        .search-wrap input::placeholder {
+            color: var(--muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: .75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            pointer-events: none;
+            font-size: .95rem;
+        }
+
+        /* Open badge */
+        .open-badge {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+            background: rgba(27, 196, 192, .12);
+            border: 1px solid rgba(27, 196, 192, .3);
+            color: var(--teal);
+            font-size: .78rem;
+            font-weight: 700;
+            padding: .35rem .75rem;
+            border-radius: 2rem;
+            white-space: nowrap;
+        }
+
+        .open-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--teal);
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .25;
+            }
+        }
+
+        /* ── HERO ── */
+        .hero {
+            text-align: center;
+            padding: 3rem 1.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 70% 60% at 20% 50%, rgba(249, 115, 22, .09) 0%, transparent 60%),
+                radial-gradient(ellipse 70% 60% at 80% 50%, rgba(27, 196, 192, .09) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 50% 0%, rgba(244, 114, 182, .07) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-logo {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin: 0 auto 1.2rem;
+            display: block;
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, .35), 0 8px 32px rgba(249, 115, 22, .25);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-bottom: .4rem;
+        }
+
+        .hero h1 .grad {
+            background: linear-gradient(90deg, var(--orange), var(--yellow), var(--pink));
+            background-size: 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 4s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 0%
+            }
+
+            100% {
+                background-position: 200%
+            }
+        }
+
+        .hero p {
+            color: var(--muted);
+            font-size: 1rem;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        /* Stats row */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--yellow);
+        }
+
+        .stat-label {
+            font-size: .72rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        /* ── CATEGORIES ── */
+        .categories {
+            display: flex;
+            gap: .55rem;
+            padding: 1.25rem 1.5rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-btn {
+            flex-shrink: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            color: var(--muted);
+            font-family: inherit;
+            font-size: .88rem;
+            font-weight: 600;
+            padding: .42rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+            transition: all var(--trans);
+            white-space: nowrap;
+        }
+
+        .cat-btn:hover {
+            border-color: var(--teal);
+            color: var(--text);
+        }
+
+        .cat-btn.active {
+            background: linear-gradient(135deg, var(--teal2), var(--teal));
+            border-color: transparent;
+            color: #0b1318;
+            font-weight: 800;
+        }
+
+        /* ── SECTION LABEL ── */
+        .section-title {
+            padding: 0 1.5rem .75rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .result-count {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--muted);
+            padding: .1rem .55rem;
+            margin-left: .4rem;
+        }
+
+        /* ── GRID ── */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 1rem;
+            padding: 0 1.5rem 3rem;
+        }
+
+        /* ── CARD ── */
+        .menu-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform var(--trans), box-shadow var(--trans), border-color var(--trans);
+            position: relative;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+            border-color: rgba(27, 196, 192, .35);
+        }
+
+        /* Glow line on hover */
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--orange), var(--teal), var(--pink));
+            opacity: 0;
+            transition: opacity var(--trans);
+        }
+
+        .menu-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-badges {
+            position: absolute;
+            top: .6rem;
+            left: .6rem;
+            display: flex;
+            flex-direction: column;
+            gap: .3rem;
+            z-index: 2;
+        }
+
+        .badge {
+            font-size: .62rem;
+            font-weight: 800;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            padding: .15rem .45rem;
+            border-radius: .3rem;
+            line-height: 1.4;
+        }
+
+        .badge-hot {
+            background: var(--orange);
+            color: #fff;
+        }
+
+        .badge-new {
+            background: var(--teal);
+            color: #0b1318;
+        }
+
+        .badge-pop {
+            background: var(--pink);
+            color: #fff;
+        }
+
+        .card-img {
+            height: 120px;
+            display: grid;
+            place-items: center;
+            font-size: 3.5rem;
+            background: linear-gradient(160deg, var(--surface), var(--card-h));
+            border-bottom: 1px solid var(--border);
+            user-select: none;
+            transition: transform var(--trans);
+        }
+
+        .menu-card:hover .card-img {
+            transform: scale(1.1);
+        }
+
+        .card-body {
+            padding: .85rem;
+            display: flex;
+            flex-direction: column;
+            gap: .25rem;
+            flex: 1;
+        }
+
+        .card-name {
+            font-size: .98rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .card-desc {
+            font-size: .78rem;
+            color: var(--muted);
+            line-height: 1.45;
+            flex: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: .65rem;
+            padding-top: .6rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .card-price {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--yellow);
+            display: flex;
+            align-items: baseline;
+            gap: .2rem;
+        }
+
+        .card-price .currency {
+            font-size: .7rem;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        .card-cat-pill {
+            font-size: .65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            padding: .2rem .5rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--muted);
+        }
+
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            margin-bottom: .6rem;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+        }
+
+        .empty-state strong {
+            color: var(--text);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 2rem 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: .8rem;
+        }
+
+        footer .footer-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin: 0 auto .6rem;
+            display: block;
+            opacity: .7;
+            box-shadow: 0 0 0 2px rgba(27, 196, 192, .25);
+        }
+
+        footer a {
+            color: var(--teal);
+            text-decoration: none;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 580px) {
+            .hero {
+                padding: 2rem 1rem 1.5rem;
+            }
+
+            .categories {
+                padding: 1rem;
+            }
+
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+                gap: .75rem;
+                padding: 0 1rem 2rem;
+            }
+
+            .section-title {
+                padding: 0 1rem .7rem;
+            }
+
+            .search-wrap {
+                max-width: 180px;
+            }
+
+            .open-badge {
+                display: none;
+            }
+        }
+
+        /* ── CARD APPEAR ANIMATION ── */
+        .menu-card {
+            animation: cardIn .3s ease backwards;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* ── CLOSED BANNER ── */
+        .closed-banner {
+            background: linear-gradient(135deg, rgba(248, 113, 113, .15), rgba(220, 38, 38, .1));
+            border-bottom: 2px solid rgba(248, 113, 113, .4);
+            padding: .8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .6rem;
+            font-size: .95rem;
+            font-weight: 700;
+            color: #f87171;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .closed-banner.hidden {
+            display: none;
+        }
+
+        .closed-icon {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ══ CLOSED BANNER ══ -->
+    <div class="closed-banner hidden" id="closed-banner">
+        <span class="closed-icon">🔒</span>
+        <span>Estamos cerrados por el momento. ¡Vuelve pronto!</span>
+    </div>
+
+    <!-- ══ HEADER ══ -->
+    <header>
+        <div class="logo">
+            <img src="casuarina.jpeg" alt="Casuarina Snacks logo" id="header-logo" />
+            <div class="logo-text-wrap">
+                <span class="logo-name">Casuarina</span>
+                <span class="logo-sub">Snacks &amp; Bebidas</span>
+            </div>
+        </div>
+
+        <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="search" id="search-input" placeholder="Buscar producto..." autocomplete="off" />
+        </div>
+
+        <div class="open-badge" id="open-badge">
+            <span class="open-dot"></span>
+            <span id="badge-text">Abierto</span>
+        </div>
+    </header>
+
+    <!-- ══ HERO ══ -->
+    <section class="hero">
+        <img src="casuarina.jpeg" alt="Casuarina Snacks" class="hero-logo" id="hero-logo" />
+        <h1>Nuestro <span class="grad">Menú</span></h1>
+        <p>Snacks, dulces y bebidas para todos los gustos. ¡Elige tu favorito!</p>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-num" id="stat-products">25</div>
+                <div class="stat-label">Productos</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">5</div>
+                <div class="stat-label">Categorías</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">$8</div>
+                <div class="stat-label">Desde MXN</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ CATEGORIES ══ -->
+    <div class="categories" id="categories">
+        <button class="cat-btn active" data-cat="todos">🌟 Todos</button>
+        <button class="cat-btn" data-cat="snacks">🍿 Snacks</button>
+        <button class="cat-btn" data-cat="dulces">🍬 Dulces</button>
+        <button class="cat-btn" data-cat="bebidas-frias">🧃 Bebidas Frías</button>
+        <button class="cat-btn" data-cat="bebidas-calientes">☕ Bebidas Calientes</button>
+        <button class="cat-btn" data-cat="saludable">🥗 Saludable</button>
+    </div>
+
+    <!-- ══ SECTION LABEL ══ -->
+    <p class="section-title" id="section-label">
+        🔥 Todos los productos
+        <span class="result-count" id="result-count">25</span>
+    </p>
+
+    <!-- ══ MENU GRID ══ -->
+    <div class="menu-grid" id="menu-grid"></div>
+
+    <!-- ══ FOOTER ══ -->
+    <footer>
+        <img src="casuarina.jpeg" alt="Casuarina Snacks" class="footer-logo" />
+        <p><strong style="color:var(--text)">Casuarina Snacks</strong> &nbsp;•&nbsp; Snacks &amp; Bebidas</p>
+        <p style="margin-top:.3rem;margin-bottom:.6rem;">Menú de muestra — datos próximamente</p>
+        <a href="admin.html" style="font-size:.75rem;color:var(--muted);text-decoration:none;opacity:.5;">⚙
+            Administrador</a>
+    </footer>
+
+    <script>
+        /* ════════════════════════════════════
+           STORAGE
+        ════════════════════════════════════ */
+        const STORAGE_PRODUCTS = 'casuarina_products';
+        const STORAGE_STATUS = 'casuarina_status';
+
+        const DEFAULT_PRODUCTS = [
+            { id: 1, name: 'Palomitas de Maíz', desc: 'Palomitas recién hechas con mantequilla y sal.', price: 25, emoji: '🍿', cat: 'snacks', badges: ['hot'], available: true },
+            { id: 2, name: 'Papas Fritas', desc: 'Crujientes papas estilo kettle, en varios sabores.', price: 30, emoji: '🥔', cat: 'snacks', badges: ['pop'], available: true },
+            { id: 3, name: 'Nachos con Queso', desc: 'Nachos dorados bañados en salsa de queso caliente.', price: 45, emoji: '🫔', cat: 'snacks', badges: [], available: true },
+            { id: 4, name: 'Hot Cheetos', desc: 'Botana de maíz muy picosa, crujiente y adictiva.', price: 20, emoji: '🌶️', cat: 'snacks', badges: ['pop'], available: true },
+            { id: 5, name: 'Palomitas Ranch', desc: 'Palomitas sabor ranch con toque de queso.', price: 30, emoji: '🍿', cat: 'snacks', badges: ['new'], available: true },
+            { id: 6, name: 'Cacahuates Japones', desc: 'Cacahuates cubiertos de harina crujiente japonesa.', price: 18, emoji: '🥜', cat: 'snacks', badges: [], available: true },
+            { id: 7, name: 'Gomitas de Osito', desc: 'Gomitas de colores con sabores de frutas tropicales.', price: 15, emoji: '🐻', cat: 'dulces', badges: ['pop'], available: true },
+            { id: 8, name: 'Chocolates Surtidos', desc: 'Selección de chocolates, leche, oscuro y almendra.', price: 35, emoji: '🍫', cat: 'dulces', badges: [], available: true },
+            { id: 9, name: 'Paleta de Tamarindo', desc: 'Paleta con chamoy, tamarindo y chile en polvo.', price: 12, emoji: '🍭', cat: 'dulces', badges: ['hot'], available: true },
+            { id: 10, name: 'Mazapán', desc: 'Tradicional mazapán de cacahuate, suave y dulce.', price: 8, emoji: '🟤', cat: 'dulces', badges: [], available: true },
+            { id: 11, name: 'Rebanada de Pay', desc: 'Pay de manzana casero con canela y azúcar.', price: 40, emoji: '🥧', cat: 'dulces', badges: ['new'], available: true },
+            { id: 12, name: 'Agua Fresca', desc: 'Agua de sandía, horchata o jamaica. Refrescante.', price: 20, emoji: '🍹', cat: 'bebidas-frias', badges: ['pop'], available: true },
+            { id: 13, name: 'Limonada', desc: 'Limonada natural con menta fresca y hielo.', price: 25, emoji: '🍋', cat: 'bebidas-frias', badges: [], available: true },
+            { id: 14, name: 'Smoothie de Fresa', desc: 'Batido de fresas naturales, leche y vainilla.', price: 40, emoji: '🍓', cat: 'bebidas-frias', badges: ['new'], available: true },
+            { id: 15, name: 'Refresco', desc: 'Variedad de refrescos fríos de tu elección.', price: 22, emoji: '🥤', cat: 'bebidas-frias', badges: [], available: true },
+            { id: 16, name: 'Agua Mineral', desc: 'Agua mineral natural con gas para refrescarte.', price: 15, emoji: '💧', cat: 'bebidas-frias', badges: [], available: true },
+            { id: 17, name: 'Té Frío de Limón', desc: 'Té helado con limón y miel, perfecto para el calor.', price: 28, emoji: '🍵', cat: 'bebidas-frias', badges: ['hot'], available: true },
+            { id: 18, name: 'Café Americano', desc: 'Café de grano negro fuerte, servido bien caliente.', price: 30, emoji: '☕', cat: 'bebidas-calientes', badges: ['pop'], available: true },
+            { id: 19, name: 'Café con Leche', desc: 'Espresso suave con leche vaporizada y canela.', price: 35, emoji: '🧋', cat: 'bebidas-calientes', badges: [], available: true },
+            { id: 20, name: 'Chocolate Caliente', desc: 'Chocolate espeso cremoso con malvaviscos.', price: 38, emoji: '🍫', cat: 'bebidas-calientes', badges: ['hot'], available: true },
+            { id: 21, name: 'Té de Manzanilla', desc: 'Tranquilo té de manzanilla con miel y limón.', price: 20, emoji: '🌼', cat: 'bebidas-calientes', badges: [], available: true },
+            { id: 22, name: 'Ensalada de Frutas', desc: 'Fruta fresca de temporada con chile y limón.', price: 35, emoji: '🍱', cat: 'saludable', badges: ['new'], available: true },
+            { id: 23, name: 'Mix de Nueces', desc: 'Mezcla de nueces, almendras y arándanos secos.', price: 45, emoji: '🥜', cat: 'saludable', badges: [], available: true },
+            { id: 24, name: 'Granola Bar', desc: 'Barra de granola con avena, miel y semillas.', price: 25, emoji: '🌾', cat: 'saludable', badges: ['pop'], available: true },
+            { id: 25, name: 'Yogurt con Granola', desc: 'Yogurt natural con granola crujiente y miel de abeja.', price: 40, emoji: '🥛', cat: 'saludable', badges: [], available: true },
+        ];
+
+        function getProducts() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_PRODUCTS)) || DEFAULT_PRODUCTS; }
+            catch { return DEFAULT_PRODUCTS; }
+        }
+        function getStatus() { return localStorage.getItem(STORAGE_STATUS) || 'open'; }
+
+        /* ════════════════════════════════════
+           STATUS BANNER
+        ════════════════════════════════════ */
+        function applyStatus() {
+            const s = getStatus();
+            const banner = document.getElementById('closed-banner');
+            const openBadge = document.getElementById('open-badge');
+            const badgeText = document.getElementById('badge-text');
+            if (s === 'closed') {
+                banner.classList.remove('hidden');
+                openBadge.style.background = 'rgba(248,113,113,.12)';
+                openBadge.style.borderColor = 'rgba(248,113,113,.3)';
+                openBadge.style.color = '#f87171';
+                badgeText.textContent = 'Cerrado';
+                document.querySelector('.open-dot').style.background = '#f87171';
+            } else {
+                banner.classList.add('hidden');
+                openBadge.style.background = '';
+                openBadge.style.borderColor = '';
+                openBadge.style.color = '';
+                badgeText.textContent = 'Abierto';
+                document.querySelector('.open-dot').style.background = '';
+            }
+        }
+
+        /* ════════════════════════════════════
+           DATA
+        ════════════════════════════════════ */
+        const CAT_LABELS = {
+            'todos': '🌟 Todos los productos',
+            'snacks': '🍿 Snacks',
+            'dulces': '🍬 Dulces',
+            'bebidas-frias': '🧃 Bebidas Frías',
+            'bebidas-calientes': '☕ Bebidas Calientes',
+            'saludable': '🥗 Saludable',
+        };
+        const CAT_NAMES = {
+            'snacks': 'Snack', 'dulces': 'Dulce', 'bebidas-frias': 'Bebida fría',
+            'bebidas-calientes': 'Bebida caliente', 'saludable': 'Saludable'
+        };
+
+        const PRODUCTS = [
+            // SNACKS
+            { id: 1, name: 'Palomitas de Maíz', desc: 'Palomitas recién hechas con mantequilla y sal.', price: 25, emoji: '🍿', cat: 'snacks', badges: ['hot'] },
+            { id: 2, name: 'Papas Fritas', desc: 'Crujientes papas estilo kettle, en varios sabores.', price: 30, emoji: '🥔', cat: 'snacks', badges: ['pop'] },
+            { id: 3, name: 'Nachos con Queso', desc: 'Nachos dorados bañados en salsa de queso caliente.', price: 45, emoji: '🫔', cat: 'snacks', badges: [] },
+            { id: 4, name: 'Hot Cheetos', desc: 'Botana de maíz muy picosa, crujiente y adictiva.', price: 20, emoji: '🌶️', cat: 'snacks', badges: ['pop'] },
+            { id: 5, name: 'Palomitas Ranch', desc: 'Palomitas sabor ranch con toque de queso.', price: 30, emoji: '🍿', cat: 'snacks', badges: ['new'] },
+            { id: 6, name: 'Cacahuates Japones', desc: 'Cacahuates cubiertos de harina crujiente japonesa.', price: 18, emoji: '🥜', cat: 'snacks', badges: [] },
+            // DULCES
+            { id: 7, name: 'Gomitas de Osito', desc: 'Gomitas de colores con sabores de frutas tropicales.', price: 15, emoji: '🐻', cat: 'dulces', badges: ['pop'] },
+            { id: 8, name: 'Chocolates Surtidos', desc: 'Selección de chocolates, leche, oscuro y almendra.', price: 35, emoji: '🍫', cat: 'dulces', badges: [] },
+            { id: 9, name: 'Paleta de Tamarindo', desc: 'Paleta con chamoy, tamarindo y chile en polvo.', price: 12, emoji: '🍭', cat: 'dulces', badges: ['hot'] },
+            { id: 10, name: 'Mazapán', desc: 'Tradicional mazapán de cacahuate, suave y dulce.', price: 8, emoji: '🟤', cat: 'dulces', badges: [] },
+            { id: 11, name: 'Rebanada de Pay', desc: 'Pay de manzana casero con canela y azúcar.', price: 40, emoji: '🥧', cat: 'dulces', badges: ['new'] },
+            // BEBIDAS FRÍAS
+            { id: 12, name: 'Agua Fresca', desc: 'Agua de sandía, horchata o jamaica. Refrescante.', price: 20, emoji: '🍹', cat: 'bebidas-frias', badges: ['pop'] },
+            { id: 13, name: 'Limonada', desc: 'Limonada natural con menta fresca y hielo.', price: 25, emoji: '🍋', cat: 'bebidas-frias', badges: [] },
+            { id: 14, name: 'Smoothie de Fresa', desc: 'Batido de fresas naturales, leche y vainilla.', price: 40, emoji: '🍓', cat: 'bebidas-frias', badges: ['new'] },
+            { id: 15, name: 'Refresco', desc: 'Variedad de refrescos fríos de tu elección.', price: 22, emoji: '🥤', cat: 'bebidas-frias', badges: [] },
+            { id: 16, name: 'Agua Mineral', desc: 'Agua mineral natural con gas para refrescarte.', price: 15, emoji: '💧', cat: 'bebidas-frias', badges: [] },
+            { id: 17, name: 'Té Frío de Limón', desc: 'Té helado con limón y miel, perfecto para el calor.', price: 28, emoji: '🍵', cat: 'bebidas-frias', badges: ['hot'] },
+            // BEBIDAS CALIENTES
+            { id: 18, name: 'Café Americano', desc: 'Café de grano negro fuerte, servido bien caliente.', price: 30, emoji: '☕', cat: 'bebidas-calientes', badges: ['pop'] },
+            { id: 19, name: 'Café con Leche', desc: 'Espresso suave con leche vaporizada y canela.', price: 35, emoji: '🧋', cat: 'bebidas-calientes', badges: [] },
+            { id: 20, name: 'Chocolate Caliente', desc: 'Chocolate espeso cremoso con malvaviscos.', price: 38, emoji: '🍫', cat: 'bebidas-calientes', badges: ['hot'] },
+            { id: 21, name: 'Té de Manzanilla', desc: 'Tranquilo té de manzanilla con miel y limón.', price: 20, emoji: '🌼', cat: 'bebidas-calientes', badges: [] },
+            // SALUDABLE
+            { id: 22, name: 'Ensalada de Frutas', desc: 'Fruta fresca de temporada con chile y limón.', price: 35, emoji: '🍱', cat: 'saludable', badges: ['new'] },
+            { id: 23, name: 'Mix de Nueces', desc: 'Mezcla de nueces, almendras y arándanos secos.', price: 45, emoji: '🥜', cat: 'saludable', badges: [] },
+            { id: 24, name: 'Granola Bar', desc: 'Barra de granola con avena, miel y semillas.', price: 25, emoji: '🌾', cat: 'saludable', badges: ['pop'] },
+            { id: 25, name: 'Yogurt con Granola', desc: 'Yogurt natural con granola crujiente y miel de abeja.', price: 40, emoji: '🥛', cat: 'saludable', badges: [] },
+        ];
+
+        /* ── STATE ── */
+        let activeCategory = 'todos';
+        let searchTerm = '';
+
+        /* ── DOM REFS ── */
+        const menuGrid = document.getElementById('menu-grid');
+        const sectionLabel = document.getElementById('section-label');
+        const resultCount = document.getElementById('result-count');
+        const statProducts = document.getElementById('stat-products');
+        const searchInput = document.getElementById('search-input');
+
+        /* ── LOGO FALLBACK ── */
+        document.querySelectorAll('img[src="casuarina.jpeg"]').forEach(img => {
+            img.onerror = function () {
+                if (this.classList.contains('hero-logo')) {
+                    const span = document.createElement('span');
+                    span.textContent = '🍿';
+                    span.style.cssText = 'font-size:5rem;display:block;margin:0 auto 1.2rem;animation:float 4s ease-in-out infinite;';
+                    this.parentNode.replaceChild(span, this);
+                } else if (this.id === 'header-logo') {
+                    const span = document.createElement('span');
+                    span.textContent = '🍿';
+                    span.style.cssText = 'font-size:2.2rem;width:52px;height:52px;display:grid;place-items:center;';
+                    this.parentNode.replaceChild(span, this);
+                } else {
+                    this.style.display = 'none';
+                }
+            };
+        });
+
+        /* ── RENDER ── */
+        function renderProducts() {
+            // Only show available products
+            const allProducts = getProducts().filter(p => p.available !== false);
+            const filtered = allProducts.filter(p => {
+                const matchCat = activeCategory === 'todos' || p.cat === activeCategory;
+                const matchSearch = p.name.toLowerCase().includes(searchTerm) ||
+                    (p.desc || '').toLowerCase().includes(searchTerm);
+                return matchCat && matchSearch;
+            });
+
+            resultCount.textContent = filtered.length;
+            statProducts.textContent = allProducts.length;
+
+            menuGrid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                menuGrid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">😕</div>
+          <p>Sin resultados para "<strong>${searchTerm || activeCategory}</strong>"</p>
+        </div>`;
+                return;
+            }
+
+            filtered.forEach((p, i) => {
+                const badgeHTML = (p.badges || []).map(b => {
+                    const labels = { hot: '🔥 Favorito', new: '✨ Nuevo', pop: '⭐ Popular' };
+                    return `<span class="badge badge-${b}">${labels[b]}</span>`;
+                }).join('');
+
+                const card = document.createElement('div');
+                card.className = 'menu-card';
+                card.style.animationDelay = `${i * 0.04}s`;
+                card.innerHTML = `
+        <div class="card-badges">${badgeHTML}</div>
+        <div class="card-img">${p.emoji || '🍿'}</div>
+        <div class="card-body">
+          <div class="card-name">${p.name}</div>
+          <div class="card-desc">${p.desc || ''}</div>
+          <div class="card-footer">
+            <div class="card-price">$${p.price}<span class="currency">MXN</span></div>
+            <span class="card-cat-pill">${CAT_NAMES[p.cat] || p.cat}</span>
+          </div>
+        </div>`;
+                menuGrid.appendChild(card);
+            });
+        }
+
+        /* ── CATEGORIES ── */
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeCategory = btn.dataset.cat;
+                sectionLabel.childNodes[0].textContent = CAT_LABELS[activeCategory] + ' ';
+                renderProducts();
+            });
+        });
+
+        /* ── SEARCH ── */
+        searchInput.addEventListener('input', e => {
+            searchTerm = e.target.value.toLowerCase().trim();
+            if (searchTerm) {
+                sectionLabel.childNodes[0].textContent = `🔍 Resultados para "${e.target.value.trim()}" `;
+            } else {
+                sectionLabel.childNodes[0].textContent = CAT_LABELS[activeCategory] + ' ';
+            }
+            renderProducts();
+        });
+
+        /* ── INIT ── */
+        applyStatus();
+        renderProducts();
+    </script>
+</body>
+
+</html>
