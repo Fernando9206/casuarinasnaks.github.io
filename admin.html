@@ -804,6 +804,104 @@
             background: rgba(251, 191, 36, .2);
         }
 
+        /* IMAGE UPLOAD */
+        .img-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--rsm);
+            padding: 1.2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color var(--trans), background var(--trans);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .img-upload-area:hover,
+        .img-upload-area.dragover {
+            border-color: var(--teal);
+            background: rgba(27, 196, 192, .05);
+        }
+
+        .img-upload-area input[type=file] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .img-upload-placeholder {
+            color: var(--muted);
+            font-size: .85rem;
+            pointer-events: none;
+        }
+
+        .img-upload-placeholder .up-icon {
+            font-size: 1.8rem;
+            margin-bottom: .3rem;
+            display: block;
+        }
+
+        .img-preview-wrap {
+            display: none;
+            position: relative;
+        }
+
+        .img-preview-wrap img {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            border-radius: var(--rsm);
+            display: block;
+        }
+
+        .img-preview-remove {
+            position: absolute;
+            top: .4rem;
+            right: .4rem;
+            background: rgba(0, 0, 0, .7);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            font-size: .75rem;
+            color: #fff;
+            transition: background var(--trans);
+        }
+
+        .img-preview-remove:hover {
+            background: var(--red);
+        }
+
+        .upload-progress {
+            height: 3px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: .5rem;
+            overflow: hidden;
+            display: none;
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--teal), var(--orange));
+            transition: width .2s ease;
+        }
+
+        /* Product list thumbnail */
+        .prod-thumb {
+            width: 36px;
+            height: 36px;
+            border-radius: .35rem;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
         /* TOAST */
         .toast-wrap {
             position: fixed;
@@ -1104,6 +1202,23 @@
                                 <label class="badge-check"><input type="checkbox" id="b-pop" /> ⭐ Popular</label>
                             </div>
                         </div>
+                        <div class="form-field full">
+                            <label>Foto del producto (opcional)</label>
+                            <div class="img-upload-area" id="img-upload-area">
+                                <input type="file" id="f-img" accept="image/*" />
+                                <div class="img-upload-placeholder" id="upload-placeholder">
+                                    <span class="up-icon">📷</span>
+                                    Haz clic o arrastra una foto aquí
+                                </div>
+                                <div class="img-preview-wrap" id="img-preview-wrap">
+                                    <img id="img-preview" src="" alt="Preview" />
+                                    <button class="img-preview-remove" id="img-remove" type="button">✕</button>
+                                </div>
+                            </div>
+                            <div class="upload-progress" id="upload-progress">
+                                <div class="upload-progress-bar" id="upload-progress-bar"></div>
+                            </div>
+                        </div>
                     </div>
                     <button class="add-product-btn" id="add-product-btn">✚ Agregar al menú</button>
                 </div>
@@ -1169,6 +1284,10 @@
             collection, doc, addDoc, updateDoc, deleteDoc,
             onSnapshot, setDoc, getDocs, writeBatch
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        /* ── CLOUDINARY ── */
+        const CLOUD_NAME = 'DVHML1XCD';        // tu cloud name
+        const UPLOAD_PRESET = 'productos_menu';  // tu unsigned preset
 
         /* ── CONSTANTS ── */
         const ADMIN_PASSWORD = 'casuarina2024'; // ← cambia aquí tu contraseña
@@ -1322,6 +1441,80 @@
             });
         }
 
+        /* ── IMAGE UPLOAD PREVIEW ── */
+        const fImg = document.getElementById('f-img');
+        const imgPreviewWrap = document.getElementById('img-preview-wrap');
+        const imgPreviewEl = document.getElementById('img-preview');
+        const uploadPlaceholder = document.getElementById('upload-placeholder');
+        const imgUploadArea = document.getElementById('img-upload-area');
+        let selectedFile = null;
+
+        function showPreview(file) {
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = e => {
+                imgPreviewEl.src = e.target.result;
+                imgPreviewWrap.style.display = 'block';
+                uploadPlaceholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+        function clearImage() {
+            selectedFile = null;
+            fImg.value = '';
+            imgPreviewEl.src = '';
+            imgPreviewWrap.style.display = 'none';
+            uploadPlaceholder.style.display = '';
+        }
+
+        fImg.addEventListener('change', e => { if (e.target.files[0]) showPreview(e.target.files[0]); });
+        document.getElementById('img-remove').addEventListener('click', e => { e.stopPropagation(); clearImage(); });
+
+        // Drag & drop
+        imgUploadArea.addEventListener('dragover', e => { e.preventDefault(); imgUploadArea.classList.add('dragover'); });
+        imgUploadArea.addEventListener('dragleave', () => imgUploadArea.classList.remove('dragover'));
+        imgUploadArea.addEventListener('drop', e => {
+            e.preventDefault(); imgUploadArea.classList.remove('dragover');
+            const f = e.dataTransfer.files[0];
+            if (f && f.type.startsWith('image/')) showPreview(f);
+        });
+
+        /* Upload img to Cloudinary → returns secure_url */
+        async function uploadImage(file) {
+            const progressWrap = document.getElementById('upload-progress');
+            const progressBar = document.getElementById('upload-progress-bar');
+            progressWrap.style.display = 'block';
+            progressBar.style.width = '10%';
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', UPLOAD_PRESET);
+
+            // Animate bar while uploading
+            let pct = 10;
+            const tick = setInterval(() => {
+                pct = Math.min(pct + 8, 85);
+                progressBar.style.width = pct + '%';
+            }, 300);
+
+            try {
+                const response = await fetch(
+                    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+                    { method: 'POST', body: formData }
+                );
+                const data = await response.json();
+                clearInterval(tick);
+                if (!response.ok || data.error) throw new Error(data.error?.message || 'Upload failed');
+                progressBar.style.width = '100%';
+                setTimeout(() => { progressWrap.style.display = 'none'; progressBar.style.width = '0%'; }, 400);
+                return data.secure_url;
+            } catch (e) {
+                clearInterval(tick);
+                progressWrap.style.display = 'none';
+                throw e;
+            }
+        }
+
         addProductBtn.addEventListener('click', async () => {
             const name = document.getElementById('f-name').value.trim();
             const price = parseFloat(document.getElementById('f-price').value);
@@ -1338,18 +1531,26 @@
             if (!cat) return toast('⚠️ Selecciona una categoría', true);
 
             addProductBtn.disabled = true;
-            addProductBtn.textContent = '⏳ Guardando...';
             try {
-                await addDoc(collection(db, COL_PRODUCTOS), { name, price, cat, emoji, desc, badges, available: true });
+                let imageUrl = null;
+                if (selectedFile) {
+                    addProductBtn.innerHTML = '⏳ Subiendo imagen a Cloudinary...';
+                    imageUrl = await uploadImage(selectedFile);
+                }
+                addProductBtn.innerHTML = '⏳ Guardando...';
+                const productData = { name, price, cat, emoji, desc, badges, available: true };
+                if (imageUrl) productData.imageUrl = imageUrl;
+                await addDoc(collection(db, COL_PRODUCTOS), productData);
                 toast(`✅ "${name}" agregado al menú`);
                 // Reset form
                 ['f-name', 'f-price', 'f-desc', 'f-emoji'].forEach(id => document.getElementById(id).value = '');
                 document.getElementById('f-cat').value = '';
                 ['b-hot', 'b-new', 'b-pop'].forEach(id => document.getElementById(id).checked = false);
                 document.querySelectorAll('.emoji-opt').forEach(x => x.classList.remove('selected'));
+                clearImage();
             } catch (e) { toast('❌ Error al guardar producto', true); console.error(e); }
             addProductBtn.disabled = false;
-            addProductBtn.innerHTML = '✚ Agregar al menú';
+            addProductBtn.innerHTML = '✖ Agregar al menú';
         });
 
         /* ════════════════ PRODUCT LIST ════════════════ */
@@ -1383,10 +1584,14 @@
                     return `<span class="pb ${cl}">${lb}</span>`;
                 }).join('');
 
+                const thumbHTML = p.imageUrl
+                    ? `<img class="prod-thumb" src="${p.imageUrl}" alt="${p.name}" loading="lazy" />`
+                    : `<div class="prod-emoji">${p.emoji || '🍿'}</div>`;
+
                 const row = document.createElement('div');
                 row.className = `prod-item ${isAvail ? '' : 'unavailable'}`;
                 row.innerHTML = `
-        <div class="prod-emoji">${p.emoji || '🍿'}</div>
+        ${thumbHTML}
         <div class="prod-info">
           <div class="prod-name">${p.name}</div>
           <div class="prod-meta">
@@ -1403,6 +1608,7 @@
         </div>`;
                 prodList.appendChild(row);
             });
+
 
             prodList.querySelectorAll('.avail-toggle').forEach(btn => btn.addEventListener('click', () => toggleAvailability(btn.dataset.id)));
             prodList.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', () => askDelete(btn.dataset.id)));
