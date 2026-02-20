@@ -11,6 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet" />
+
+    <!-- Firebase initialization is now handled by firebase-config.js -->
+
     <style>
         *,
         *::before,
@@ -748,10 +751,14 @@
         ];
 
         function getProducts() {
+            // Prefer live Firestore data; fall back to localStorage then defaults
+            if (window.__fsProducts && window.__fsProducts.length > 0) return window.__fsProducts;
             try { return JSON.parse(localStorage.getItem(STORAGE_PRODUCTS)) || DEFAULT_PRODUCTS; }
             catch { return DEFAULT_PRODUCTS; }
         }
-        function getStatus() { return localStorage.getItem(STORAGE_STATUS) || 'open'; }
+        function getStatus() {
+            return window.__fsStatus || localStorage.getItem(STORAGE_STATUS) || 'open';
+        }
 
         /* ════════════════════════════════════
            STATUS BANNER
@@ -929,8 +936,30 @@
         });
 
         /* ── INIT ── */
+        // Expose to window so the Firebase module script can trigger re-renders
+        window.renderProducts = renderProducts;
+        window.applyStatus = applyStatus;
         applyStatus();
         renderProducts();
+    </script>
+
+    <!-- ══ FIRESTORE REAL-TIME LISTENER ══ -->
+    <script type="module">
+        import { db } from './firebase-config.js';
+        import { collection, doc, onSnapshot }
+            from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // — Products: listen for any change and re-render immediately
+        onSnapshot(collection(db, 'productos'), (snapshot) => {
+            window.__fsProducts = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+            if (typeof window.renderProducts === 'function') window.renderProducts();
+        }, (err) => { console.warn('[Firestore products]', err); });
+
+        // — Status: listen for open/closed changes
+        onSnapshot(doc(db, 'config', 'negocio'), (snap) => {
+            window.__fsStatus = snap.exists() ? (snap.data().status || 'open') : 'open';
+            if (typeof window.applyStatus === 'function') window.applyStatus();
+        }, (err) => { console.warn('[Firestore status]', err); });
     </script>
 </body>
 
