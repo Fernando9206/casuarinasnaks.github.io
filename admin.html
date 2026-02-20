@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin — Casuarina Snacks</title>
+    <link rel="icon" href="casuarina.jpeg" type="image/jpeg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
@@ -1118,8 +1119,13 @@
                             <div class="section-desc">Activa/desactiva disponibilidad o elimina productos</div>
                         </div>
                     </div>
-                    <button class="seed-btn" id="seed-btn" title="Cargar productos de ejemplo a Firestore">⬆ Cargar
-                        productos de ejemplo</button>
+                    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                        <button class="seed-btn" id="seed-btn"
+                            title="Borra todos y carga 25 productos de ejemplo limpios">↩ Resetear a ejemplos</button>
+                        <button class="seed-btn" id="clear-btn"
+                            style="border-color:rgba(248,113,113,.3);color:var(--red);"
+                            title="Elimina TODOS los productos">🗑 Limpiar todo</button>
+                    </div>
                 </div>
                 <div class="section-body">
                     <div class="products-controls">
@@ -1431,21 +1437,43 @@
             pendingDeleteId = null;
         });
 
-        /* ── SEED DEFAULT PRODUCTS ── */
+        /* ── SEED / RESET ── */
+        async function deleteAllProducts() {
+            const snap = await getDocs(collection(db, COL_PRODUCTOS));
+            if (snap.empty) return 0;
+            const batch = writeBatch(db);
+            snap.docs.forEach(d => batch.delete(d.ref));
+            await batch.commit();
+            return snap.size;
+        }
+
         document.getElementById('seed-btn').addEventListener('click', async () => {
             const snap = await getDocs(collection(db, COL_PRODUCTOS));
-            if (!snap.empty) {
-                const ok = confirm(`Ya hay ${snap.size} productos en Firebase. ¿Agregar los ${DEFAULT_PRODUCTS.length} de ejemplo igualmente?`);
-                if (!ok) return;
-            }
-            const batch = writeBatch(db);
-            DEFAULT_PRODUCTS.forEach(p => {
-                const ref = doc(collection(db, COL_PRODUCTOS));
-                batch.set(ref, { ...p, available: true });
-            });
-            await batch.commit();
-            toast(`✅ ${DEFAULT_PRODUCTS.length} productos de ejemplo cargados a Firebase`);
+            const msg = snap.empty
+                ? `¿Cargar los 25 productos de ejemplo a Firestore?`
+                : `Hay ${snap.size} productos. Se borrarán TODOS y se cargarán los 25 de ejemplo limpios. ¿Continuar?`;
+            if (!confirm(msg)) return;
+            try {
+                await deleteAllProducts();
+                const batch = writeBatch(db);
+                DEFAULT_PRODUCTS.forEach(p => {
+                    batch.set(doc(collection(db, COL_PRODUCTOS)), { ...p, available: true });
+                });
+                await batch.commit();
+                toast(`✅ Reset completo: 25 productos cargados`);
+            } catch (e) { toast('❌ Error al resetear', true); console.error(e); }
         });
+
+        document.getElementById('clear-btn').addEventListener('click', async () => {
+            const snap = await getDocs(collection(db, COL_PRODUCTOS));
+            if (snap.empty) return toast('⚠️ No hay productos que eliminar');
+            if (!confirm(`¿Eliminar los ${snap.size} productos de Firestore? Esta acción NO se puede deshacer.`)) return;
+            try {
+                const n = await deleteAllProducts();
+                toast(`🗑️ ${n} productos eliminados`);
+            } catch (e) { toast('❌ Error al limpiar', true); console.error(e); }
+        });
+
 
         /* ── TOAST ── */
         function toast(msg, warn = false) {
