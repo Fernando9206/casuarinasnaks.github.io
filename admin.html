@@ -62,7 +62,7 @@
             border-radius: 3px;
         }
 
-        /* ── LOGIN SCREEN ── */
+        /* LOGIN */
         #login-screen {
             position: fixed;
             inset: 0;
@@ -190,7 +190,7 @@
             display: block;
         }
 
-        /* ── MAIN APP (hidden until login) ── */
+        /* APP */
         #app {
             display: none;
         }
@@ -199,7 +199,7 @@
             display: block;
         }
 
-        /* ── TOP BAR ── */
+        /* TOPBAR */
         .topbar {
             position: sticky;
             top: 0;
@@ -301,7 +301,7 @@
             color: var(--red);
         }
 
-        /* ── CONTENT ── */
+        /* CONTENT */
         .content {
             max-width: 1100px;
             margin: 0 auto;
@@ -311,7 +311,7 @@
             gap: 2rem;
         }
 
-        /* ── SECTION CARD ── */
+        /* SECTION CARD */
         .section-card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -353,7 +353,7 @@
             padding: 1.4rem;
         }
 
-        /* ── STATUS TOGGLE ── */
+        /* STATUS TOGGLE */
         .status-row {
             display: flex;
             align-items: center;
@@ -442,7 +442,7 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, .4);
         }
 
-        /* ── ADD PRODUCT FORM ── */
+        /* ADD PRODUCT FORM */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -456,7 +456,7 @@
         }
 
         .form-field.full {
-            grid-column: 1 / -1;
+            grid-column: 1/-1;
         }
 
         .form-field label {
@@ -497,7 +497,6 @@
             background: var(--card);
         }
 
-        /* Emoji picker row */
         .emoji-row {
             display: flex;
             flex-wrap: wrap;
@@ -568,7 +567,14 @@
             box-shadow: 0 4px 20px rgba(27, 196, 192, .35);
         }
 
-        /* ── PRODUCT LIST ── */
+        .add-product-btn:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* PRODUCT LIST */
         .products-controls {
             display: flex;
             align-items: center;
@@ -718,7 +724,6 @@
             flex-shrink: 0;
         }
 
-        /* Availability toggle */
         .avail-toggle {
             display: flex;
             align-items: center;
@@ -726,10 +731,10 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--rsm);
-            padding: .3rem .6rem;
             cursor: pointer;
             font-size: .78rem;
             font-weight: 700;
+            padding: .3rem .6rem;
             transition: all var(--trans);
             white-space: nowrap;
         }
@@ -768,7 +773,6 @@
             background: rgba(248, 113, 113, .08);
         }
 
-        /* Empty */
         .prod-empty {
             text-align: center;
             padding: 2.5rem;
@@ -781,7 +785,25 @@
             margin-bottom: .4rem;
         }
 
-        /* ── TOAST ── */
+        /* SEED btn */
+        .seed-btn {
+            background: rgba(251, 191, 36, .12);
+            border: 1px solid rgba(251, 191, 36, .3);
+            border-radius: var(--rsm);
+            color: var(--yellow);
+            font-family: inherit;
+            font-size: .82rem;
+            font-weight: 700;
+            padding: .4rem .9rem;
+            cursor: pointer;
+            transition: all var(--trans);
+        }
+
+        .seed-btn:hover {
+            background: rgba(251, 191, 36, .2);
+        }
+
+        /* TOAST */
         .toast-wrap {
             position: fixed;
             bottom: 1.5rem;
@@ -829,7 +851,7 @@
             }
         }
 
-        /* ── CONFIRM MODAL ── */
+        /* CONFIRM MODAL */
         .confirm-overlay {
             position: fixed;
             inset: 0;
@@ -921,8 +943,25 @@
             transform: scale(1.04);
         }
 
-        /* ── RESPONSIVE ── */
-        @media (max-width: 580px) {
+        /* SYNC INDICATOR */
+        .sync-indicator {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+            font-size: .72rem;
+            color: var(--teal);
+            font-weight: 600;
+        }
+
+        .sync-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--teal);
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @media (max-width:580px) {
             .content {
                 padding: 1.2rem 1rem 3rem;
             }
@@ -949,7 +988,7 @@
 
 <body>
 
-    <!-- ══ LOGIN ══ -->
+    <!-- LOGIN -->
     <div id="login-screen">
         <div class="login-card">
             <div class="login-logo">
@@ -968,20 +1007,20 @@
         </div>
     </div>
 
-    <!-- ══ APP ══ -->
+    <!-- APP -->
     <div id="app">
-
-        <!-- TOP BAR -->
         <header class="topbar">
             <div class="topbar-left">
-                <div class="topbar-logo">
-                    <img src="casuarina.jpeg" alt="Logo" onerror="this.style.display='none'" />
+                <div class="topbar-logo"><img src="casuarina.jpeg" alt="Logo" onerror="this.style.display='none'" />
                 </div>
                 <div>
                     <div class="topbar-title">Casuarina <span>Admin</span></div>
                     <div class="topbar-sub">Panel de control</div>
                 </div>
                 <span class="admin-pill">Admin</span>
+                <div class="sync-indicator" id="sync-indicator" style="display:none">
+                    <span class="sync-dot"></span> Sincronizado con Firebase
+                </div>
             </div>
             <div class="topbar-right">
                 <a class="menu-link" href="index.html" target="_blank">👁 Ver menú</a>
@@ -990,8 +1029,7 @@
         </header>
 
         <div class="content">
-
-            <!-- ══ STATUS CARD ══ -->
+            <!-- STATUS -->
             <div class="section-card">
                 <div class="section-head">
                     <div class="section-head-left">
@@ -1005,10 +1043,8 @@
                 <div class="section-body">
                     <div class="status-row">
                         <div class="status-info">
-                            <div class="status-badge open" id="status-badge">
-                                <span class="status-dot"></span>
-                                <span id="status-text">Abierto</span>
-                            </div>
+                            <div class="status-badge open" id="status-badge"><span class="status-dot"></span><span
+                                    id="status-text">Abierto</span></div>
                             <div class="status-hint" id="status-hint">El menú muestra el indicador verde de "Abierto"
                             </div>
                         </div>
@@ -1017,7 +1053,7 @@
                 </div>
             </div>
 
-            <!-- ══ ADD PRODUCT CARD ══ -->
+            <!-- ADD PRODUCT -->
             <div class="section-card">
                 <div class="section-head">
                     <div class="section-head-left">
@@ -1052,9 +1088,7 @@
                         <div class="form-field">
                             <label>Emoji del producto *</label>
                             <input type="text" id="f-emoji" placeholder="🍿" maxlength="4" style="font-size:1.3rem" />
-                            <div class="emoji-row" id="emoji-row">
-                                🍿🥔🌮🌭🧆🥜🍫🍬🍭🧁🥧🍰🍹🧃🥤☕🧋🍵💧🍓🍋🍎🥗🌾🥛
-                            </div>
+                            <div class="emoji-row" id="emoji-row"></div>
                         </div>
                         <div class="form-field full">
                             <label>Descripción</label>
@@ -1064,12 +1098,9 @@
                         <div class="form-field full">
                             <label>Etiquetas (badges)</label>
                             <div class="badge-checks">
-                                <label class="badge-check"><input type="checkbox" id="b-hot" value="hot" /> 🔥
-                                    Favorito</label>
-                                <label class="badge-check"><input type="checkbox" id="b-new" value="new" /> ✨
-                                    Nuevo</label>
-                                <label class="badge-check"><input type="checkbox" id="b-pop" value="pop" /> ⭐
-                                    Popular</label>
+                                <label class="badge-check"><input type="checkbox" id="b-hot" /> 🔥 Favorito</label>
+                                <label class="badge-check"><input type="checkbox" id="b-new" /> ✨ Nuevo</label>
+                                <label class="badge-check"><input type="checkbox" id="b-pop" /> ⭐ Popular</label>
                             </div>
                         </div>
                     </div>
@@ -1077,7 +1108,7 @@
                 </div>
             </div>
 
-            <!-- ══ PRODUCT LIST CARD ══ -->
+            <!-- PRODUCT LIST -->
             <div class="section-card">
                 <div class="section-head">
                     <div class="section-head-left">
@@ -1087,22 +1118,28 @@
                             <div class="section-desc">Activa/desactiva disponibilidad o elimina productos</div>
                         </div>
                     </div>
+                    <button class="seed-btn" id="seed-btn" title="Cargar productos de ejemplo a Firestore">⬆ Cargar
+                        productos de ejemplo</button>
                 </div>
                 <div class="section-body">
                     <div class="products-controls">
-                        <button class="filter-btn active" data-filter="all" id="filter-all">Todos</button>
-                        <button class="filter-btn" data-filter="avail" id="filter-avail">✅ Disponibles</button>
-                        <button class="filter-btn" data-filter="out" id="filter-out">⛔ Sin inventario</button>
-                        <span class="count-pill" id="prod-count-pill">25 productos</span>
+                        <button class="filter-btn active" data-filter="all">Todos</button>
+                        <button class="filter-btn" data-filter="avail">✅ Disponibles</button>
+                        <button class="filter-btn" data-filter="out">⛔ Sin inventario</button>
+                        <span class="count-pill" id="prod-count-pill">— productos</span>
                     </div>
-                    <div class="prod-list" id="prod-list"></div>
+                    <div class="prod-list" id="prod-list">
+                        <div class="prod-empty">
+                            <div class="ei">⏳</div>
+                            <p>Conectando con Firebase...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-        </div><!-- /content -->
-    </div><!-- /app -->
-
-    <!-- ══ CONFIRM MODAL ══ -->
+    <!-- CONFIRM MODAL -->
     <div class="confirm-overlay" id="confirm-overlay">
         <div class="confirm-box">
             <div class="confirm-icon">🗑️</div>
@@ -1115,64 +1152,81 @@
         </div>
     </div>
 
-    <!-- ══ TOAST ══ -->
     <div class="toast-wrap" id="toast-wrap"></div>
 
-    <script>
-        /* ════════════════════════════════════
-           CONSTANTS & STORAGE
-        ════════════════════════════════════ */
-        const STORAGE_PRODUCTS = 'casuarina_products';
-        const STORAGE_STATUS = 'casuarina_status';
-        const ADMIN_PASSWORD = 'casuarina2024'; // ← cambia esta contraseña
+    <!-- ══════════════════════════════════════
+     ADMIN MODULE SCRIPT — Firebase + UI
+══════════════════════════════════════ -->
+    <script type="module">
+        import { db } from './firebase-config.js';
+        import {
+            collection, doc, addDoc, updateDoc, deleteDoc,
+            onSnapshot, setDoc, getDocs, writeBatch
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        /* ── CONSTANTS ── */
+        const ADMIN_PASSWORD = 'casuarina2024'; // ← cambia aquí tu contraseña
+        const COL_PRODUCTOS = 'productos';
+        const DOC_NEGOCIO = doc(db, 'config', 'negocio');
 
         const DEFAULT_PRODUCTS = [
-            { id: 1, name: 'Palomitas de Maíz', desc: 'Palomitas recién hechas con mantequilla y sal.', price: 25, emoji: '🍿', cat: 'snacks', badges: ['hot'], available: true },
-            { id: 2, name: 'Papas Fritas', desc: 'Crujientes papas estilo kettle, en varios sabores.', price: 30, emoji: '🥔', cat: 'snacks', badges: ['pop'], available: true },
-            { id: 3, name: 'Nachos con Queso', desc: 'Nachos dorados bañados en salsa de queso caliente.', price: 45, emoji: '🫔', cat: 'snacks', badges: [], available: true },
-            { id: 4, name: 'Hot Cheetos', desc: 'Botana de maíz muy picosa, crujiente y adictiva.', price: 20, emoji: '🌶️', cat: 'snacks', badges: ['pop'], available: true },
-            { id: 5, name: 'Palomitas Ranch', desc: 'Palomitas sabor ranch con toque de queso.', price: 30, emoji: '🍿', cat: 'snacks', badges: ['new'], available: true },
-            { id: 6, name: 'Cacahuates Japones', desc: 'Cacahuates cubiertos de harina crujiente japonesa.', price: 18, emoji: '🥜', cat: 'snacks', badges: [], available: true },
-            { id: 7, name: 'Gomitas de Osito', desc: 'Gomitas de colores con sabores de frutas tropicales.', price: 15, emoji: '🐻', cat: 'dulces', badges: ['pop'], available: true },
-            { id: 8, name: 'Chocolates Surtidos', desc: 'Selección de chocolates, leche, oscuro y almendra.', price: 35, emoji: '🍫', cat: 'dulces', badges: [], available: true },
-            { id: 9, name: 'Paleta de Tamarindo', desc: 'Paleta con chamoy, tamarindo y chile en polvo.', price: 12, emoji: '🍭', cat: 'dulces', badges: ['hot'], available: true },
-            { id: 10, name: 'Mazapán', desc: 'Tradicional mazapán de cacahuate, suave y dulce.', price: 8, emoji: '🟤', cat: 'dulces', badges: [], available: true },
-            { id: 11, name: 'Rebanada de Pay', desc: 'Pay de manzana casero con canela y azúcar.', price: 40, emoji: '🥧', cat: 'dulces', badges: ['new'], available: true },
-            { id: 12, name: 'Agua Fresca', desc: 'Agua de sandía, horchata o jamaica. Refrescante.', price: 20, emoji: '🍹', cat: 'bebidas-frias', badges: ['pop'], available: true },
-            { id: 13, name: 'Limonada', desc: 'Limonada natural con menta fresca y hielo.', price: 25, emoji: '🍋', cat: 'bebidas-frias', badges: [], available: true },
-            { id: 14, name: 'Smoothie de Fresa', desc: 'Batido de fresas naturales, leche y vainilla.', price: 40, emoji: '🍓', cat: 'bebidas-frias', badges: ['new'], available: true },
-            { id: 15, name: 'Refresco', desc: 'Variedad de refrescos fríos de tu elección.', price: 22, emoji: '🥤', cat: 'bebidas-frias', badges: [], available: true },
-            { id: 16, name: 'Agua Mineral', desc: 'Agua mineral natural con gas para refrescarte.', price: 15, emoji: '💧', cat: 'bebidas-frias', badges: [], available: true },
-            { id: 17, name: 'Té Frío de Limón', desc: 'Té helado con limón y miel, perfecto para el calor.', price: 28, emoji: '🍵', cat: 'bebidas-frias', badges: ['hot'], available: true },
-            { id: 18, name: 'Café Americano', desc: 'Café de grano negro fuerte, servido bien caliente.', price: 30, emoji: '☕', cat: 'bebidas-calientes', badges: ['pop'], available: true },
-            { id: 19, name: 'Café con Leche', desc: 'Espresso suave con leche vaporizada y canela.', price: 35, emoji: '🧋', cat: 'bebidas-calientes', badges: [], available: true },
-            { id: 20, name: 'Chocolate Caliente', desc: 'Chocolate espeso cremoso con malvaviscos.', price: 38, emoji: '🍫', cat: 'bebidas-calientes', badges: ['hot'], available: true },
-            { id: 21, name: 'Té de Manzanilla', desc: 'Tranquilo té de manzanilla con miel y limón.', price: 20, emoji: '🌼', cat: 'bebidas-calientes', badges: [], available: true },
-            { id: 22, name: 'Ensalada de Frutas', desc: 'Fruta fresca de temporada con chile y limón.', price: 35, emoji: '🍱', cat: 'saludable', badges: ['new'], available: true },
-            { id: 23, name: 'Mix de Nueces', desc: 'Mezcla de nueces, almendras y arándanos secos.', price: 45, emoji: '🥜', cat: 'saludable', badges: [], available: true },
-            { id: 24, name: 'Granola Bar', desc: 'Barra de granola con avena, miel y semillas.', price: 25, emoji: '🌾', cat: 'saludable', badges: ['pop'], available: true },
-            { id: 25, name: 'Yogurt con Granola', desc: 'Yogurt natural con granola crujiente y miel de abeja.', price: 40, emoji: '🥛', cat: 'saludable', badges: [], available: true },
+            { name: 'Palomitas de Maíz', desc: 'Palomitas recién hechas con mantequilla y sal.', price: 25, emoji: '🍿', cat: 'snacks', badges: ['hot'] },
+            { name: 'Papas Fritas', desc: 'Crujientes papas estilo kettle, en varios sabores.', price: 30, emoji: '🥔', cat: 'snacks', badges: ['pop'] },
+            { name: 'Nachos con Queso', desc: 'Nachos dorados bañados en salsa de queso caliente.', price: 45, emoji: '🫔', cat: 'snacks', badges: [] },
+            { name: 'Hot Cheetos', desc: 'Botana de maíz muy picosa, crujiente y adictiva.', price: 20, emoji: '🌶️', cat: 'snacks', badges: ['pop'] },
+            { name: 'Palomitas Ranch', desc: 'Palomitas sabor ranch con toque de queso.', price: 30, emoji: '🍿', cat: 'snacks', badges: ['new'] },
+            { name: 'Cacahuates Japones', desc: 'Cacahuates cubiertos de harina crujiente japonesa.', price: 18, emoji: '🥜', cat: 'snacks', badges: [] },
+            { name: 'Gomitas de Osito', desc: 'Gomitas de colores con sabores de frutas tropicales.', price: 15, emoji: '🐻', cat: 'dulces', badges: ['pop'] },
+            { name: 'Chocolates Surtidos', desc: 'Selección de chocolates, leche, oscuro y almendra.', price: 35, emoji: '🍫', cat: 'dulces', badges: [] },
+            { name: 'Paleta de Tamarindo', desc: 'Paleta con chamoy, tamarindo y chile en polvo.', price: 12, emoji: '🍭', cat: 'dulces', badges: ['hot'] },
+            { name: 'Mazapán', desc: 'Tradicional mazapán de cacahuate, suave y dulce.', price: 8, emoji: '🟤', cat: 'dulces', badges: [] },
+            { name: 'Rebanada de Pay', desc: 'Pay de manzana casero con canela y azúcar.', price: 40, emoji: '🥧', cat: 'dulces', badges: ['new'] },
+            { name: 'Agua Fresca', desc: 'Agua de sandía, horchata o jamaica. Refrescante.', price: 20, emoji: '🍹', cat: 'bebidas-frias', badges: ['pop'] },
+            { name: 'Limonada', desc: 'Limonada natural con menta fresca y hielo.', price: 25, emoji: '🍋', cat: 'bebidas-frias', badges: [] },
+            { name: 'Smoothie de Fresa', desc: 'Batido de fresas naturales, leche y vainilla.', price: 40, emoji: '🍓', cat: 'bebidas-frias', badges: ['new'] },
+            { name: 'Refresco', desc: 'Variedad de refrescos fríos de tu elección.', price: 22, emoji: '🥤', cat: 'bebidas-frias', badges: [] },
+            { name: 'Agua Mineral', desc: 'Agua mineral natural con gas para refrescarte.', price: 15, emoji: '💧', cat: 'bebidas-frias', badges: [] },
+            { name: 'Té Frío de Limón', desc: 'Té helado con limón y miel, perfecto para el calor.', price: 28, emoji: '🍵', cat: 'bebidas-frias', badges: ['hot'] },
+            { name: 'Café Americano', desc: 'Café de grano negro fuerte, servido bien caliente.', price: 30, emoji: '☕', cat: 'bebidas-calientes', badges: ['pop'] },
+            { name: 'Café con Leche', desc: 'Espresso suave con leche vaporizada y canela.', price: 35, emoji: '🧋', cat: 'bebidas-calientes', badges: [] },
+            { name: 'Chocolate Caliente', desc: 'Chocolate espeso cremoso con malvaviscos.', price: 38, emoji: '🍫', cat: 'bebidas-calientes', badges: ['hot'] },
+            { name: 'Té de Manzanilla', desc: 'Tranquilo té de manzanilla con miel y limón.', price: 20, emoji: '🌼', cat: 'bebidas-calientes', badges: [] },
+            { name: 'Ensalada de Frutas', desc: 'Fruta fresca de temporada con chile y limón.', price: 35, emoji: '🍱', cat: 'saludable', badges: ['new'] },
+            { name: 'Mix de Nueces', desc: 'Mezcla de nueces, almendras y arándanos secos.', price: 45, emoji: '🥜', cat: 'saludable', badges: [] },
+            { name: 'Granola Bar', desc: 'Barra de granola con avena, miel y semillas.', price: 25, emoji: '🌾', cat: 'saludable', badges: ['pop'] },
+            { name: 'Yogurt con Granola', desc: 'Yogurt natural con granola crujiente y miel.', price: 40, emoji: '🥛', cat: 'saludable', badges: [] },
         ];
 
-        /* ── Storage helpers ── */
-        function getProducts() {
-            try { return JSON.parse(localStorage.getItem(STORAGE_PRODUCTS)) || DEFAULT_PRODUCTS; }
-            catch { return DEFAULT_PRODUCTS; }
-        }
-        function saveProducts(p) { localStorage.setItem(STORAGE_PRODUCTS, JSON.stringify(p)); }
+        /* ── STATE ── */
+        let liveProducts = [];    // populated by onSnapshot
+        let liveStatus = 'open';
+        let activeFilter = 'all';
+        let pendingDeleteId = null;
 
-        function getStatus() { return localStorage.getItem(STORAGE_STATUS) || 'open'; }
-        function saveStatus(s) { localStorage.setItem(STORAGE_STATUS, s); }
-
-        /* ════════════════════════════════════
-           LOGIN
-        ════════════════════════════════════ */
+        /* ── DOM REFS ── */
         const loginScreen = document.getElementById('login-screen');
         const app = document.getElementById('app');
         const pwdInput = document.getElementById('pwd-input');
         const loginBtn = document.getElementById('login-btn');
         const loginError = document.getElementById('login-error');
+        const statusBadge = document.getElementById('status-badge');
+        const statusText = document.getElementById('status-text');
+        const statusHint = document.getElementById('status-hint');
+        const statusToggle = document.getElementById('status-toggle-btn');
+        const prodList = document.getElementById('prod-list');
+        const countPill = document.getElementById('prod-count-pill');
+        const toastWrap = document.getElementById('toast-wrap');
+        const confirmOverlay = document.getElementById('confirm-overlay');
+        const confirmTextEl = document.getElementById('confirm-text');
+        const confirmOk = document.getElementById('confirm-ok');
+        const confirmCancel = document.getElementById('confirm-cancel');
+        const syncIndicator = document.getElementById('sync-indicator');
+        const addProductBtn = document.getElementById('add-product-btn');
 
+        /* ── CAT NAMES ── */
+        const CAT_NAMES = { snacks: 'Snack', dulces: 'Dulce', 'bebidas-frias': 'Beb. Fría', 'bebidas-calientes': 'Beb. Caliente', saludable: 'Saludable' };
+
+        /* ════════════════ LOGIN ════════════════ */
         function doLogin() {
             if (pwdInput.value === ADMIN_PASSWORD) {
                 loginScreen.style.display = 'none';
@@ -1186,7 +1240,6 @@
         }
         loginBtn.addEventListener('click', doLogin);
         pwdInput.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-
         document.getElementById('logout-btn').addEventListener('click', () => {
             app.classList.remove('visible');
             loginScreen.style.display = 'flex';
@@ -1194,28 +1247,31 @@
             loginError.classList.remove('show');
         });
 
-        /* ════════════════════════════════════
-           APP INIT
-        ════════════════════════════════════ */
+        /* ════════════════ INIT ════════════════ */
         function initApp() {
-            // Init default products in storage if not set yet
-            if (!localStorage.getItem(STORAGE_PRODUCTS)) saveProducts(DEFAULT_PRODUCTS);
-            renderStatus();
-            renderProducts();
             initEmojiPicker();
+            startListeners();
         }
 
-        /* ════════════════════════════════════
-           STATUS
-        ════════════════════════════════════ */
-        const statusBadge = document.getElementById('status-badge');
-        const statusText = document.getElementById('status-text');
-        const statusHint = document.getElementById('status-hint');
-        const statusToggle = document.getElementById('status-toggle-btn');
+        /* ════════════════ FIRESTORE LISTENERS ════════════════ */
+        function startListeners() {
+            // Products — real-time
+            onSnapshot(collection(db, COL_PRODUCTOS), (snap) => {
+                liveProducts = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+                syncIndicator.style.display = 'flex';
+                renderProductList();
+            }, err => { toast('❌ Error al conectar con Firebase', true); console.error(err); });
 
+            // Status — real-time
+            onSnapshot(DOC_NEGOCIO, (snap) => {
+                liveStatus = snap.exists() ? (snap.data().status || 'open') : 'open';
+                renderStatus();
+            }, console.error);
+        }
+
+        /* ════════════════ STATUS ════════════════ */
         function renderStatus() {
-            const s = getStatus();
-            if (s === 'open') {
+            if (liveStatus === 'open') {
                 statusBadge.className = 'status-badge open';
                 statusText.textContent = 'Abierto';
                 statusHint.textContent = 'El menú muestra el indicador verde de "Abierto"';
@@ -1230,47 +1286,37 @@
             }
         }
 
-        statusToggle.addEventListener('click', () => {
-            const current = getStatus();
-            const next = current === 'open' ? 'closed' : 'open';
-            saveStatus(next);
-            renderStatus();
-            toast(next === 'closed' ? '🔒 Negocio marcado como Cerrado' : '🔓 Negocio marcado como Abierto');
+        statusToggle.addEventListener('click', async () => {
+            const next = liveStatus === 'open' ? 'closed' : 'open';
+            try {
+                await setDoc(DOC_NEGOCIO, { status: next });
+                toast(next === 'closed' ? '🔒 Negocio marcado como Cerrado' : '🔓 Negocio marcado como Abierto');
+            } catch (e) { toast('❌ Error al actualizar estado', true); console.error(e); }
         });
 
-        /* ════════════════════════════════════
-           ADD PRODUCT
-        ════════════════════════════════════ */
-        let selectedEmoji = '';
-        let activeFilter = 'all';
+        /* ════════════════ ADD PRODUCT ════════════════ */
+        initEmojiPickerSetup(); // declared below
+        function initEmojiPickerSetup() { } // placeholder — called after DOM ready
 
         function initEmojiPicker() {
             const row = document.getElementById('emoji-row');
-            row.innerHTML = '';
             const emojis = ['🍿', '🥔', '🌮', '🌭', '🧆', '🥜', '🍫', '🍬', '🍭', '🧁', '🥧', '🍰', '🍹', '🧃', '🥤', '☕', '🧋', '🍵', '💧', '🍓', '🍋', '🍎', '🥗', '🌾', '🥛', '🌶️', '🐻', '🟤', '🍺', '🫔'];
             emojis.forEach(e => {
                 const btn = document.createElement('span');
-                btn.className = 'emoji-opt';
-                btn.textContent = e;
-                btn.title = e;
+                btn.className = 'emoji-opt'; btn.textContent = e; btn.title = e;
                 btn.addEventListener('click', () => {
                     document.getElementById('f-emoji').value = e;
-                    selectedEmoji = e;
                     document.querySelectorAll('.emoji-opt').forEach(x => x.classList.remove('selected'));
                     btn.classList.add('selected');
                 });
                 row.appendChild(btn);
             });
+            document.getElementById('f-emoji').addEventListener('input', function () {
+                document.querySelectorAll('.emoji-opt').forEach(x => x.classList.toggle('selected', x.textContent === this.value.trim()));
+            });
         }
 
-        document.getElementById('f-emoji').addEventListener('input', function () {
-            selectedEmoji = this.value.trim();
-            document.querySelectorAll('.emoji-opt').forEach(x => {
-                x.classList.toggle('selected', x.textContent === selectedEmoji);
-            });
-        });
-
-        document.getElementById('add-product-btn').addEventListener('click', () => {
+        addProductBtn.addEventListener('click', async () => {
             const name = document.getElementById('f-name').value.trim();
             const price = parseFloat(document.getElementById('f-price').value);
             const cat = document.getElementById('f-cat').value;
@@ -1285,71 +1331,54 @@
             if (!price || price <= 0) return toast('⚠️ Ingresa un precio válido', true);
             if (!cat) return toast('⚠️ Selecciona una categoría', true);
 
-            const products = getProducts();
-            const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-            products.push({ id: newId, name, price, cat, emoji, desc, badges, available: true });
-            saveProducts(products);
-            renderProducts();
-            toast(`✅ "${name}" agregado al menú`);
-
-            // Reset form
-            document.getElementById('f-name').value = '';
-            document.getElementById('f-price').value = '';
-            document.getElementById('f-cat').value = '';
-            document.getElementById('f-emoji').value = '';
-            document.getElementById('f-desc').value = '';
-            document.getElementById('b-hot').checked = false;
-            document.getElementById('b-new').checked = false;
-            document.getElementById('b-pop').checked = false;
-            document.querySelectorAll('.emoji-opt').forEach(x => x.classList.remove('selected'));
+            addProductBtn.disabled = true;
+            addProductBtn.textContent = '⏳ Guardando...';
+            try {
+                await addDoc(collection(db, COL_PRODUCTOS), { name, price, cat, emoji, desc, badges, available: true });
+                toast(`✅ "${name}" agregado al menú`);
+                // Reset form
+                ['f-name', 'f-price', 'f-desc', 'f-emoji'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('f-cat').value = '';
+                ['b-hot', 'b-new', 'b-pop'].forEach(id => document.getElementById(id).checked = false);
+                document.querySelectorAll('.emoji-opt').forEach(x => x.classList.remove('selected'));
+            } catch (e) { toast('❌ Error al guardar producto', true); console.error(e); }
+            addProductBtn.disabled = false;
+            addProductBtn.innerHTML = '✚ Agregar al menú';
         });
 
-        /* ════════════════════════════════════
-           PRODUCT LIST
-        ════════════════════════════════════ */
-        const CAT_NAMES = {
-            snacks: 'Snack', dulces: 'Dulce', 'bebidas-frias': 'Beb. Fría',
-            'bebidas-calientes': 'Beb. Caliente', saludable: 'Saludable'
-        };
-
+        /* ════════════════ PRODUCT LIST ════════════════ */
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 activeFilter = btn.dataset.filter;
-                renderProducts();
+                renderProductList();
             });
         });
 
-        function renderProducts() {
-            const products = getProducts();
-            const list = document.getElementById('prod-list');
-            const countPill = document.getElementById('prod-count-pill');
-
-            let filtered = products;
-            if (activeFilter === 'avail') filtered = products.filter(p => p.available !== false);
-            if (activeFilter === 'out') filtered = products.filter(p => p.available === false);
+        function renderProductList() {
+            let filtered = liveProducts;
+            if (activeFilter === 'avail') filtered = liveProducts.filter(p => p.available !== false);
+            if (activeFilter === 'out') filtered = liveProducts.filter(p => p.available === false);
 
             countPill.textContent = `${filtered.length} producto${filtered.length !== 1 ? 's' : ''}`;
-            list.innerHTML = '';
+            prodList.innerHTML = '';
 
             if (filtered.length === 0) {
-                list.innerHTML = `<div class="prod-empty"><div class="ei">🗂️</div><p>No hay productos en esta categoría</p></div>`;
+                prodList.innerHTML = `<div class="prod-empty"><div class="ei">🗂️</div><p>${liveProducts.length === 0 ? 'Sin productos. Usa "Cargar productos de ejemplo" para empezar.' : 'No hay productos en esta categoría.'}</p></div>`;
                 return;
             }
 
             filtered.forEach(p => {
                 const isAvail = p.available !== false;
-                const row = document.createElement('div');
-                row.className = `prod-item ${isAvail ? '' : 'unavailable'}`;
-                row.dataset.id = p.id;
-
                 const badgeHTML = (p.badges || []).map(b => {
                     const cl = { hot: 'pb-hot', new: 'pb-new', pop: 'pb-pop' }[b] || '';
                     const lb = { hot: 'Favorito', new: 'Nuevo', pop: 'Popular' }[b] || b;
                     return `<span class="pb ${cl}">${lb}</span>`;
                 }).join('');
 
+                const row = document.createElement('div');
+                row.className = `prod-item ${isAvail ? '' : 'unavailable'}`;
                 row.innerHTML = `
         <div class="prod-emoji">${p.emoji || '🍿'}</div>
         <div class="prod-info">
@@ -1361,78 +1390,70 @@
           </div>
         </div>
         <div class="prod-actions">
-          <button class="avail-toggle ${isAvail ? 'available' : 'unavailable'}"
-            data-id="${p.id}" id="avail-${p.id}">
+          <button class="avail-toggle ${isAvail ? 'available' : 'unavailable'}" data-id="${p.firestoreId}">
             ${isAvail ? '✅ Disponible' : '⛔ Sin inventario'}
           </button>
-          <button class="delete-btn" data-id="${p.id}" title="Eliminar producto" id="del-${p.id}">🗑</button>
+          <button class="delete-btn" data-id="${p.firestoreId}" title="Eliminar">🗑</button>
         </div>`;
-                list.appendChild(row);
+                prodList.appendChild(row);
             });
 
-            // Availability toggle
-            document.querySelectorAll('.avail-toggle').forEach(btn => {
-                btn.addEventListener('click', () => toggleAvailability(Number(btn.dataset.id)));
-            });
-
-            // Delete
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', () => askDelete(Number(btn.dataset.id)));
-            });
+            prodList.querySelectorAll('.avail-toggle').forEach(btn => btn.addEventListener('click', () => toggleAvailability(btn.dataset.id)));
+            prodList.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', () => askDelete(btn.dataset.id)));
         }
 
-        function toggleAvailability(id) {
-            const products = getProducts();
-            const p = products.find(x => x.id === id);
+        async function toggleAvailability(firestoreId) {
+            const p = liveProducts.find(x => x.firestoreId === firestoreId);
             if (!p) return;
-            p.available = !p.available;
-            saveProducts(products);
-            renderProducts();
-            toast(p.available ? `✅ "${p.name}" marcado como disponible` : `⛔ "${p.name}" marcado como sin inventario`);
+            try {
+                await updateDoc(doc(db, COL_PRODUCTOS, firestoreId), { available: !p.available });
+                toast(p.available ? `⛔ "${p.name}" marcado sin inventario` : `✅ "${p.name}" marcado disponible`);
+            } catch (e) { toast('❌ Error al actualizar disponibilidad', true); console.error(e); }
         }
 
-        /* ── DELETE with confirm ── */
-        let pendingDeleteId = null;
-        const confirmOverlay = document.getElementById('confirm-overlay');
-        const confirmText = document.getElementById('confirm-text');
-        const confirmOk = document.getElementById('confirm-ok');
-        const confirmCancel = document.getElementById('confirm-cancel');
-
-        function askDelete(id) {
-            const products = getProducts();
-            const p = products.find(x => x.id === id);
+        /* ── DELETE ── */
+        function askDelete(firestoreId) {
+            const p = liveProducts.find(x => x.firestoreId === firestoreId);
             if (!p) return;
-            pendingDeleteId = id;
-            confirmText.textContent = `¿Eliminar "${p.name}" del menú? Esta acción no se puede deshacer.`;
+            pendingDeleteId = firestoreId;
+            confirmTextEl.textContent = `¿Eliminar "${p.name}" del menú? Esta acción no se puede deshacer.`;
             confirmOverlay.classList.add('open');
         }
-        confirmCancel.addEventListener('click', () => {
-            confirmOverlay.classList.remove('open');
-            pendingDeleteId = null;
-        });
-        confirmOverlay.addEventListener('click', e => {
-            if (e.target === confirmOverlay) { confirmOverlay.classList.remove('open'); pendingDeleteId = null; }
-        });
-        confirmOk.addEventListener('click', () => {
-            if (pendingDeleteId === null) return;
-            const products = getProducts().filter(p => p.id !== pendingDeleteId);
-            saveProducts(products);
-            renderProducts();
-            toast('🗑️ Producto eliminado del menú');
+        confirmCancel.addEventListener('click', () => { confirmOverlay.classList.remove('open'); pendingDeleteId = null; });
+        confirmOverlay.addEventListener('click', e => { if (e.target === confirmOverlay) { confirmOverlay.classList.remove('open'); pendingDeleteId = null; } });
+        confirmOk.addEventListener('click', async () => {
+            if (!pendingDeleteId) return;
+            try {
+                await deleteDoc(doc(db, COL_PRODUCTOS, pendingDeleteId));
+                toast('🗑️ Producto eliminado del menú');
+            } catch (e) { toast('❌ Error al eliminar', true); console.error(e); }
             confirmOverlay.classList.remove('open');
             pendingDeleteId = null;
         });
 
-        /* ════════════════════════════════════
-           TOAST
-        ════════════════════════════════════ */
+        /* ── SEED DEFAULT PRODUCTS ── */
+        document.getElementById('seed-btn').addEventListener('click', async () => {
+            const snap = await getDocs(collection(db, COL_PRODUCTOS));
+            if (!snap.empty) {
+                const ok = confirm(`Ya hay ${snap.size} productos en Firebase. ¿Agregar los ${DEFAULT_PRODUCTS.length} de ejemplo igualmente?`);
+                if (!ok) return;
+            }
+            const batch = writeBatch(db);
+            DEFAULT_PRODUCTS.forEach(p => {
+                const ref = doc(collection(db, COL_PRODUCTOS));
+                batch.set(ref, { ...p, available: true });
+            });
+            await batch.commit();
+            toast(`✅ ${DEFAULT_PRODUCTS.length} productos de ejemplo cargados a Firebase`);
+        });
+
+        /* ── TOAST ── */
         function toast(msg, warn = false) {
-            const wrap = document.getElementById('toast-wrap');
             const t = document.createElement('div');
             t.className = 'toast';
             if (warn) t.style.borderColor = 'rgba(251,191,36,.4)';
             t.textContent = msg;
-            wrap.appendChild(t);
+            toastWrap.appendChild(t);
             setTimeout(() => t.remove(), 2200);
         }
     </script>
