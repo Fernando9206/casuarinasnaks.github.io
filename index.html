@@ -387,14 +387,16 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: transform var(--trans), box-shadow var(--trans), border-color var(--trans);
+            transition: transform .28s cubic-bezier(.34, 1.56, .64, 1), box-shadow .28s ease, border-color .28s ease;
             position: relative;
+            cursor: pointer;
         }
 
         .menu-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
-            border-color: rgba(27, 196, 192, .35);
+            transform: scale(2.3) translateY(-6px);
+            box-shadow: 0 20px 56px rgba(0, 0, 0, .6), 0 0 0 1px rgba(249, 115, 22, .25);
+            border-color: rgba(249, 115, 22, .35);
+            z-index: 5;
         }
 
         /* Glow line on hover */
@@ -595,6 +597,142 @@
             }
         }
 
+        /* ── PRODUCT DETAIL MODAL ── */
+        .prod-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(0, 0, 0, .75);
+            backdrop-filter: blur(8px);
+            display: grid;
+            place-items: center;
+            padding: 1rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s ease;
+        }
+
+        .prod-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .prod-modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            width: min(440px, 100%);
+            max-height: 92vh;
+            overflow-y: auto;
+            transform: scale(.88) translateY(20px);
+            transition: transform .3s cubic-bezier(.34, 1.56, .64, 1);
+            position: relative;
+        }
+
+        .prod-overlay.open .prod-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .prod-modal-close {
+            position: absolute;
+            top: .7rem;
+            right: .7rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--muted);
+            transition: all .2s ease;
+            z-index: 3;
+        }
+
+        .prod-modal-close:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .prod-modal-img {
+            width: 100%;
+            height: 220px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(160deg, var(--card), var(--card-h));
+            border-bottom: 1px solid var(--border);
+            font-size: 6rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .prod-modal-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+        }
+
+        .prod-modal-body {
+            padding: 1.4rem;
+        }
+
+        .prod-modal-badges {
+            display: flex;
+            gap: .35rem;
+            flex-wrap: wrap;
+            margin-bottom: .7rem;
+        }
+
+        .prod-modal-name {
+            font-size: 1.5rem;
+            font-weight: 900;
+            line-height: 1.15;
+            margin-bottom: .5rem;
+        }
+
+        .prod-modal-desc {
+            color: var(--muted);
+            font-size: .95rem;
+            line-height: 1.6;
+            margin-bottom: 1.1rem;
+        }
+
+        .prod-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: .9rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .prod-modal-price {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--yellow);
+        }
+
+        .prod-modal-price .currency {
+            font-size: .85rem;
+            font-weight: 500;
+            color: var(--muted);
+            margin-left: .2rem;
+        }
+
+        .prod-modal-cat {
+            font-size: .7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            padding: .3rem .7rem;
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            color: var(--muted);
+        }
+
         /* ── CARD APPEAR ANIMATION ── */
         .menu-card {
             animation: cardIn .3s ease backwards;
@@ -706,6 +844,27 @@
 
     <!-- ══ MENU GRID ══ -->
     <div class="menu-grid" id="menu-grid"></div>
+
+    <!-- ══ PRODUCT DETAIL MODAL ══ -->
+    <div class="prod-overlay" id="prod-overlay">
+        <div class="prod-modal" id="prod-modal">
+            <button class="prod-modal-close" id="modal-close">✕</button>
+            <div class="prod-modal-img" id="modal-img-wrap">
+                <span id="modal-emoji"></span>
+            </div>
+            <div class="prod-modal-body">
+                <div class="prod-modal-badges" id="modal-badges"></div>
+                <div class="prod-modal-name" id="modal-name"></div>
+                <div class="prod-modal-desc" id="modal-desc"></div>
+                <div class="prod-modal-footer">
+                    <div class="prod-modal-price">
+                        <span id="modal-price"></span><span class="currency">MXN</span>
+                    </div>
+                    <span class="prod-modal-cat" id="modal-cat"></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ══ FOOTER ══ -->
     <footer>
@@ -896,12 +1055,17 @@
                     return `<span class="badge badge-${b}">${labels[b]}</span>`;
                 }).join('');
 
+                // Show photo if exists, else emoji
+                const imgSection = p.imageUrl
+                    ? `<div class="card-img" style="padding:0;overflow:hidden"><img src="${p.imageUrl}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover" loading="lazy" /></div>`
+                    : `<div class="card-img">${p.emoji || '🍿'}</div>`;
+
                 const card = document.createElement('div');
                 card.className = 'menu-card';
                 card.style.animationDelay = `${i * 0.04}s`;
                 card.innerHTML = `
         <div class="card-badges">${badgeHTML}</div>
-        <div class="card-img">${p.emoji || '🍿'}</div>
+        ${imgSection}
         <div class="card-body">
           <div class="card-name">${p.name}</div>
           <div class="card-desc">${p.desc || ''}</div>
@@ -910,6 +1074,9 @@
             <span class="card-cat-pill">${CAT_NAMES[p.cat] || p.cat}</span>
           </div>
         </div>`;
+
+                // Click/tap → open detail modal
+                card.addEventListener('click', () => openProdModal(p));
                 menuGrid.appendChild(card);
             });
         }
@@ -935,6 +1102,46 @@
             }
             renderProducts();
         });
+
+        /* ── PRODUCT DETAIL MODAL ── */
+        const prodOverlay = document.getElementById('prod-overlay');
+
+        function openProdModal(p) {
+            const badgeLabels = { hot: '🔥 Favorito', new: '✨ Nuevo', pop: '⭐ Popular' };
+            const badgeCls = { hot: 'badge-hot', new: 'badge-new', pop: 'badge-pop' };
+            document.getElementById('modal-badges').innerHTML =
+                (p.badges || []).map(b => `<span class="badge ${badgeCls[b]}">${badgeLabels[b]}</span>`).join('');
+            document.getElementById('modal-name').textContent = p.name;
+            document.getElementById('modal-desc').textContent = p.desc || '';
+            document.getElementById('modal-price').textContent = `$${p.price}`;
+            document.getElementById('modal-cat').textContent = CAT_NAMES[p.cat] || p.cat;
+
+            // Image or emoji
+            const wrap = document.getElementById('modal-img-wrap');
+            const emoji = document.getElementById('modal-emoji');
+            const existingImg = wrap.querySelector('img');
+            if (existingImg) existingImg.remove();
+            if (p.imageUrl) {
+                const img = document.createElement('img');
+                img.src = p.imageUrl; img.alt = p.name;
+                wrap.appendChild(img);
+                emoji.style.display = 'none';
+            } else {
+                emoji.textContent = p.emoji || '🍿';
+                emoji.style.display = '';
+            }
+            prodOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProdModal() {
+            prodOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('modal-close').addEventListener('click', closeProdModal);
+        prodOverlay.addEventListener('click', e => { if (e.target === prodOverlay) closeProdModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeProdModal(); });
 
         /* ── INIT ── */
         // Expose to window so the Firebase module script can trigger re-renders
