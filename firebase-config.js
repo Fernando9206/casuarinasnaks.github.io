@@ -12,3 +12,4 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+// Images are uploaded to Cloudinary — no Firebase Storage needed
