@@ -7,9 +7,11 @@ const firebaseConfig = {
     projectId: "casuarinasnaks-menu",
     storageBucket: "casuarinasnaks-menu.firebasestorage.app",
     messagingSenderId: "113253329955",
-    appId: "1:113253329955:web:236baea1897109c6f85596"
+    appId: "1:113253329955:web:236baea1897109c6f85596",
+    measurementId: "G-DHNTLG0J0E"
 };
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+const analytics = getAnalytics(app);
 // Images are uploaded to Cloudinary — no Firebase Storage needed
