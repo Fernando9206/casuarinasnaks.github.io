@@ -1708,10 +1708,11 @@
          MENU MODULE SCRIPT — Firebase + UI
     ══════════════════════════════════════ -->
     <script type="module">
-        import { db } from './firebase-config.js';
+        import { db, analytics } from './firebase-config.js';
         import {
             collection, doc, onSnapshot
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { logEvent } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
 
         /* ── WHATSAPP NUMBER ─────────────────────────
            Pon aquí el número del negocio con código de país, sin +, espacios ni guiones
@@ -2348,6 +2349,13 @@
             });
             msg += `\nTotal estimado: $${getCartTotal()} MXN`;
             msg += `\n\n¿En cuánto tiempo puedo pasar por él?`;
+
+            // 📊 Registrar evento en Firebase Analytics
+            logEvent(analytics, 'click_whatsapp', {
+                event_category: 'Ventas',
+                event_label: 'Pedido Enviado',
+                value: getCartTotal()
+            });
 
             const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');

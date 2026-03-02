@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCpdBpc6jH-iOUeRD4QRdkaqUSjmgIbmGU",
@@ -13,5 +14,5 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-const analytics = getAnalytics(app);
+export const analytics = getAnalytics(app);
 // Images are uploaded to Cloudinary — no Firebase Storage needed
